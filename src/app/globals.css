@@ -66,6 +66,14 @@
   --shadow-opacity: var(--shadow-opacity);
   --color-shadow-color: var(--shadow-color);
   --color-destructive-foreground: var(--destructive-foreground);
+  
+  /* Custom Color Palette */
+  --color-gray: var(--color-gray);
+  --color-blue: var(--color-blue);
+  --color-yellow: var(--color-yellow);
+  --color-orange: var(--color-orange);
+  --color-green: var(--color-green);
+  --color-red: var(--color-red);
 }
 
 :root {
@@ -122,6 +130,14 @@
   --shadow-xl: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 8px 10px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
   --shadow-2xl: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00);
   --tracking-normal: 0em;
+  
+  /* Custom Color Palette */
+  --color-gray: oklch(0.5 0.005 240);
+  --color-blue: oklch(0.6 0.15 240);
+  --color-yellow: oklch(0.8 0.12 90);
+  --color-orange: oklch(0.7 0.15 45);
+  --color-green: oklch(0.6 0.12 140);
+  --color-red: oklch(0.6 0.2 25);
 }
 
 .dark {
@@ -177,6 +193,14 @@
   --shadow-lg: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 4px 6px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
   --shadow-xl: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 8px 10px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
   --shadow-2xl: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00);
+  
+  /* Custom Color Palette - Dark Mode */
+  --color-gray: oklch(0.6 0.005 240);
+  --color-blue: oklch(0.65 0.15 240);
+  --color-yellow: oklch(0.75 0.12 90);
+  --color-orange: oklch(0.7 0.15 45);
+  --color-green: oklch(0.65 0.12 140);
+  --color-red: oklch(0.65 0.2 25);
 }
 
 @layer base {
