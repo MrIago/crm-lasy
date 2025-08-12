@@ -3,6 +3,7 @@ import { Open_Sans, Roboto_Mono, Lora } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/mr-theme/components/provider"
 import { MrAuth } from "@/mr-auth"
+import { Toaster } from "@/components/ui/sonner"
 
 const openSans = Open_Sans({
   variable: "--font-sans",
@@ -47,6 +48,7 @@ export default function RootLayout({
           <MrAuth>
             {children}
           </MrAuth>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
