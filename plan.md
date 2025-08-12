@@ -56,32 +56,30 @@ observações (truncar em 100 caracteres)
 [x] RBAC Configurado
 [x] Tema configurado
 [x] Navbar configurada
+[x] Botões de Add Status e modal
 
 
 # Sprint Backlog
 
 Conseguir criar colunas estilo kanban/trello, de forma dinamica e responsiva
 
-[ ] Botões de Add Status
-[ ] kanban com colunas dos status
+[ ] Botão de Add Lead e modal
 
-botão de add status:
 
-abre modal com os campos:
-- titulo: string
-- cor: 
-6 opções de cores: cinza, azul, amarelo, laranja, verde, vermelho
-sendo cada uma vars definidas no globals com cores para light e dark
-  /* Custom Color Palette */
-  --color-gray: var(--color-gray);
-  --color-blue: var(--color-blue);
-  --color-yellow: var(--color-yellow);
-  --color-orange: var(--color-orange);
-  --color-green: var(--color-green);
-  --color-red: var(--color-red);
-use essas classes e mostre quadradinhos com essas cores, ao clicar seleciona uma e muda automaticamente o fundo do modal para ela, para ver em tempo real
+botão add novo lead:
 
-primeiro de tudo, precisamos criar um componente para o modal de adição de status, e um botão para abrir esse modal.
+abre um sheet (componente shadcn)
 
-inicialmente sem funcionalidades (chamando funções vazias que vamos implementar dps com calma)
+- nome: string
+- e-mail: string.email
+- telefone: string.number > (xx) 9 9999-9999 formato brasil
+- empresa: string
+- observações: string
+- status: string
+- histórico de interações: array de objeto {data: timestamp do firestore, notas: string}
 
+Validações, máscaras de campo e formatação de valores para cada campo.
+
+botão de salvar e cancelar
+
+ao salvar fecha o sheet, e revalida os dados do kanban (ainda não tem o kanban, mas já pode fazer o revalidate tag na action e ai ao criar o kanban seta a tag de revalidate)
