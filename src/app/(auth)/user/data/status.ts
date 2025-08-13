@@ -11,6 +11,7 @@ import {
   DEFAULT_ORDER_START,
   DEFAULT_ORDER_INCREMENT
 } from '../helpers/useOrder'
+import { deleteAllLeadsFromStatus } from './leads'
 import { revalidateTag } from 'next/cache'
 
 export interface Status {
@@ -225,6 +226,13 @@ export async function deleteStatus(id: string): Promise<{ success: boolean; erro
       return { success: false, error: 'Status não encontrado' }
     }
 
+    // Primeiro, deleta todos os leads do status
+    const deleteLeadsResult = await deleteAllLeadsFromStatus(id)
+    if (!deleteLeadsResult.success) {
+      return { success: false, error: deleteLeadsResult.error || 'Erro ao deletar leads do status' }
+    }
+
+    // Depois, deleta o status
     await statusRef.delete()
 
     // Revalidar tags

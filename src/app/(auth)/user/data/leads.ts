@@ -413,6 +413,51 @@ export async function deleteLead(statusId: string, id: string): Promise<{ succes
   }
 }
 
+export async function deleteAllLeadsFromStatus(statusId: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const { user } = await getUserData()
+    
+    if (!user) {
+      return { success: false, error: 'Usuário não autenticado' }
+    }
+
+    const leadsRef = adminDb
+      .collection('kanbans')
+      .doc(user.uid)
+      .collection('status')
+      .doc(statusId)
+      .collection('leads')
+
+    // Busca todos os leads do status
+    const leadsSnapshot = await leadsRef.get()
+    
+    if (leadsSnapshot.empty) {
+      return { success: true } // Não há leads para deletar
+    }
+
+    // Deletar em lotes para otimizar performance
+    const batch = adminDb.batch()
+    leadsSnapshot.docs.forEach(doc => {
+      batch.delete(doc.ref)
+    })
+
+    await batch.commit()
+
+    // Revalidar tags
+    revalidateTag(LEADS_TAG)
+    revalidateTag(KANBAN_TAG)
+    revalidateTag(`leads-${statusId}`)
+    
+    return { success: true }
+  } catch (error) {
+    console.error('Erro ao deletar leads do status:', error)
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Erro desconhecido' 
+    }
+  }
+}
+
 export async function reorderLead(statusId: string, leadId: string, newPosition: number): Promise<{ success: boolean; error?: string }> {
   try {
     const { user } = await getUserData()

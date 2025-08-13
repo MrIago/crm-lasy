@@ -11,9 +11,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Plus, ChevronLeft, ChevronRight, ArrowUpDown, Edit } from "lucide-react"
+import { Plus, ChevronLeft, ChevronRight, ArrowUpDown, Edit, Trash2 } from "lucide-react"
 import { toast } from "sonner"
-import { getAllStatus, Status } from "../data/status"
+import { getAllStatus, Status, deleteStatus } from "../data/status"
 import { getLeadsByStatus, Lead, moveLeadToStatus, deleteLead } from "../data/leads"
 import CardLeadMobile from "./card-lead-mobile"
 import MoveItensMobile from "./move-itens-mobile"
@@ -173,6 +173,31 @@ export default function QuadroKanbanMobile({ onAddLead, onEditLead, onViewLead, 
     }
   }
 
+  // Manipula exclusão de status
+  const handleDeleteStatus = async (statusId: string, statusTitle: string) => {
+    const leadsCount = leads.length
+    
+    const confirmMessage = leadsCount > 0 
+      ? `Tem certeza que deseja deletar o status "${statusTitle}"?\n\nEsta ação irá deletar PERMANENTEMENTE:\n• O status\n• Todos os ${leadsCount} leads neste status\n\nEsta ação não pode ser desfeita.`
+      : `Tem certeza que deseja deletar o status "${statusTitle}"?\n\nEsta ação não pode ser desfeita.`
+
+    if (!confirm(confirmMessage)) {
+      return
+    }
+
+    try {
+      const result = await deleteStatus(statusId)
+      if (result.success) {
+        await loadStatus() // Recarrega todos os status
+        toast.success("Status deletado com sucesso!")
+      } else {
+        toast.error(result.error || "Erro ao deletar status")
+      }
+    } catch {
+      toast.error("Erro ao deletar status")
+    }
+  }
+
   // Handlers do modo de reordenação
   const handleEnterReorderMode = () => {
     if (leads.length <= 1) {
@@ -246,18 +271,30 @@ export default function QuadroKanbanMobile({ onAddLead, onEditLead, onViewLead, 
                 )}
               </SelectValue>
             </SelectTrigger>
-            <SelectContent>
-              {/* Botão de editar status atual */}
-              {currentStatus && onEditStatus && (
-                <div className="px-2 py-1 border-b">
+            <SelectContent className="w-full max-w-[calc(100vw-2rem)] max-h-[60vh] overflow-y-auto">
+              {/* Botões de ação do status atual */}
+              {currentStatus && (onEditStatus || true) && (
+                <div className="px-2 py-1 border-b space-y-1">
+                  {onEditStatus && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onEditStatus(currentStatus)}
+                      className="w-full justify-start gap-2 h-8"
+                    >
+                      <Edit className="h-4 w-4" />
+                      Editar &quot;{currentStatus.title}&quot;
+                    </Button>
+                  )}
+                  
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => onEditStatus(currentStatus)}
-                    className="w-full justify-start gap-2 h-8"
+                    onClick={() => handleDeleteStatus(currentStatus.id, currentStatus.title)}
+                    className="w-full justify-start gap-2 h-8 text-destructive hover:text-destructive hover:bg-destructive/10"
                   >
-                    <Edit className="h-4 w-4" />
-                    Editar &quot;{currentStatus.title}&quot;
+                    <Trash2 className="h-4 w-4" />
+                    Deletar &quot;{currentStatus.title}&quot;
                   </Button>
                 </div>
               )}

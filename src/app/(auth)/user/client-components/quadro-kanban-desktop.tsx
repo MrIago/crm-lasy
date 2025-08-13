@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
-import { Plus, ChevronLeft, ChevronRight } from "lucide-react"
+import { Plus, ChevronLeft, ChevronRight, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import BarraBuscaDesktop from "./barra-busca-desktop"
 import BarraFiltrosDesktop, { SortOption } from "./barra-filtros-desktop"
@@ -23,7 +23,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable"
 import { toast } from "sonner"
-import { getAllStatus, Status, reorderStatus } from "../data/status"
+import { getAllStatus, Status, reorderStatus, deleteStatus } from "../data/status"
 import { getLeadsByStatus, Lead, moveLeadToStatus, reorderLead, deleteLead } from "../data/leads"
 import CardLeadDesktop from "./card-lead-desktop"
 
@@ -285,6 +285,32 @@ export default function QuadroKanbanDesktop({ onAddLead, onEditLead, onViewLead,
     }
   }
 
+  // Manipula exclusão de status
+  const handleDeleteStatus = async (statusId: string, statusTitle: string) => {
+    const column = columns[statusId]
+    const leadsCount = column?.leads.length || 0
+    
+    const confirmMessage = leadsCount > 0 
+      ? `Tem certeza que deseja deletar o status "${statusTitle}"?\n\nEsta ação irá deletar PERMANENTEMENTE:\n• O status\n• Todos os ${leadsCount} leads neste status\n\nEsta ação não pode ser desfeita.`
+      : `Tem certeza que deseja deletar o status "${statusTitle}"?\n\nEsta ação não pode ser desfeita.`
+
+    if (!confirm(confirmMessage)) {
+      return
+    }
+
+    try {
+      const result = await deleteStatus(statusId)
+      if (result.success) {
+        await loadStatus() // Recarrega todos os status
+        toast.success("Status deletado com sucesso!")
+      } else {
+        toast.error(result.error || "Erro ao deletar status")
+      }
+    } catch {
+      toast.error("Erro ao deletar status")
+    }
+  }
+
   // Manipula reordenação de status
   const handleReorderStatus = async (statusId: string, direction: 'left' | 'right') => {
     const currentIndex = allStatus.findIndex(s => s.id === statusId)
@@ -496,16 +522,29 @@ export default function QuadroKanbanDesktop({ onAddLead, onEditLead, onViewLead,
                     </Badge>
                   </div>
                   
-                  {onAddLead && (
+                  <div className="flex items-center gap-1">
+                    {onAddLead && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={onAddLead}
+                        className="h-8 w-8 p-0"
+                        title="Adicionar lead"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    )}
+                    
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={onAddLead}
-                      className="h-8 w-8 p-0"
+                      onClick={() => handleDeleteStatus(status.id, status.title)}
+                      className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+                      title="Deletar status e todos os seus leads"
                     >
-                      <Plus className="h-4 w-4" />
+                      <Trash2 className="h-4 w-4" />
                     </Button>
-                  )}
+                  </div>
                 </div>
 
                 {/* Lista de leads */}
