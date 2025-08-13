@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Lasy CRM
 
-## Getting Started
+Mini CRM responsivo desenvolvido com Next.js, TypeScript e Firebase, focado em usabilidade e design moderno.
 
-First, run the development server:
+### Demo ao vivo
+
+Site em produção na Netlify: [crmlasy.netlify.app](https://crmlasy.netlify.app)
+
+### Vídeo de apresentação
+
+<iframe width="100%" height="420" src="https://www.youtube.com/embed/KXuJnqp8JFc" title="Apresentação Lasy CRM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+Caso seu visualizador não suporte iframes, use o link abaixo:
+
+[Assista no YouTube](https://www.youtube.com/watch?v=KXuJnqp8JFc)
+
+Ou clique na thumbnail:
+
+[![Assista à apresentação no YouTube](https://img.youtube.com/vi/KXuJnqp8JFc/maxresdefault.jpg)](https://www.youtube.com/watch?v=KXuJnqp8JFc)
+
+### Funcionalidades
+
+- **Autenticação de usuário**: Firebase Auth com RBAC
+- **Pipeline Kanban**: drag & drop com colunas personalizáveis
+- **Inserção e Importação**: formulários e upload de CSV/XLSX
+- **Busca e Filtros**: por nome, estágio, data e origem
+- **Exportação de dados**: download em planilha Excel
+- **Detalhes do lead**: visualização e edição completas
+- **Histórico de interações**: timeline por lead
+- **Design responsivo**: interface otimizada para desktop e mobile
+- **UX otimizada**: foco nas tarefas mais comuns
+- **Validações e máscaras**: campos formatados e validados
+
+### Stack Tecnológica
+
+- **Next.js 15** (React)
+- **Firestore** (NoSQL Database)
+- **Firebase Auth**
+- **shadcn/ui** (componentes)
+- **Tailwind CSS** (estilos)
+- **Zustand** (state management)
+
+### Como executar localmente
+
+Pré-requisitos: Node.js 18+ e pnpm/yarn/npm/bun.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+# Instalar dependências
+pnpm install
+
+# Rodar em desenvolvimento
 pnpm dev
-# or
-bun dev
+
+# Alternativas
+# npm run dev
+# yarn dev
+# bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra `http://localhost:3000` no navegador.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Estrutura e notas
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Página inicial em `src/app/page.tsx` com o vídeo e links rápidos.
+- Componentes de UI baseados em `shadcn/ui` e estilos com Tailwind.
+- Estado global com `Zustand` e autenticação com `Firebase Auth`.
 
-## Learn More
+### Deploy
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Aplicação publicada na Netlify: [crmlasy.netlify.app](https://crmlasy.netlify.app)
