@@ -18,22 +18,12 @@ import {
   CalendarDays,
   RotateCcw
 } from "lucide-react"
+import { useSearchStore } from "../store/search-store"
 
 export type SortOption = 'name-asc' | 'name-desc' | 'date-newest' | 'date-oldest' | 'none'
 
-interface BarraFiltrosDesktopProps {
-  sortBy: SortOption
-  onSortChange: (sort: SortOption) => void
-  totalLeads?: number
-  filteredLeads?: number
-}
-
-export default function BarraFiltrosDesktop({ 
-  sortBy, 
-  onSortChange, 
-  totalLeads = 0,
-  filteredLeads = 0
-}: BarraFiltrosDesktopProps) {
+export default function BarraFiltrosDesktop() {
+  const { sortBy, setSortBy, totalLeads, filteredLeads } = useSearchStore()
   
   const getSortLabel = (sort: SortOption): string => {
     switch (sort) {
@@ -66,7 +56,7 @@ export default function BarraFiltrosDesktop({
   }
 
   const handleResetSort = () => {
-    onSortChange('none')
+    setSortBy('none')
   }
 
   const isFiltered = sortBy !== 'none'
@@ -120,7 +110,7 @@ export default function BarraFiltrosDesktop({
           
           {/* Ordenação por nome */}
           <DropdownMenuItem
-            onClick={() => onSortChange('name-asc')}
+            onClick={() => setSortBy('name-asc')}
             className="cursor-pointer"
           >
             <ArrowUpAZ className="h-3 w-3 mr-2" />
@@ -133,7 +123,7 @@ export default function BarraFiltrosDesktop({
           </DropdownMenuItem>
           
           <DropdownMenuItem
-            onClick={() => onSortChange('name-desc')}
+            onClick={() => setSortBy('name-desc')}
             className="cursor-pointer"
           >
             <ArrowDownAZ className="h-3 w-3 mr-2" />
@@ -149,7 +139,7 @@ export default function BarraFiltrosDesktop({
           
           {/* Ordenação por data */}
           <DropdownMenuItem
-            onClick={() => onSortChange('date-newest')}
+            onClick={() => setSortBy('date-newest')}
             className="cursor-pointer"
           >
             <Calendar className="h-3 w-3 mr-2" />
@@ -162,7 +152,7 @@ export default function BarraFiltrosDesktop({
           </DropdownMenuItem>
           
           <DropdownMenuItem
-            onClick={() => onSortChange('date-oldest')}
+            onClick={() => setSortBy('date-oldest')}
             className="cursor-pointer"
           >
             <CalendarDays className="h-3 w-3 mr-2" />

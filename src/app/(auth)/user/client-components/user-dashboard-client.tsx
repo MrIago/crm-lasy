@@ -8,8 +8,11 @@ import AddLeadBtn from "./add-lead-btn"
 import AddLeadSheet from "./add-lead-sheet"
 import ViewLeadSheet from "./view-lead-sheet"
 import CsvBarDesktop from "./csv-bar-desktop"
+import BarraBuscaDesktop from "./barra-busca-desktop"
+import BarraFiltrosDesktop from "./barra-filtros-desktop"
 import QuadroKanbanDesktop from "./quadro-kanban-desktop"
 import QuadroKanbanMobile from "./quadro-kanban-mobile"
+import { useSearchStore } from "../store/search-store"
 import { Lead } from "../data/leads"
 import { Status } from "../data/status"
 
@@ -22,6 +25,9 @@ export default function UserDashboardClient() {
   const [editingStatus, setEditingStatus] = useState<Status | null>(null)
   const [kanbanRefreshTrigger, setKanbanRefreshTrigger] = useState(0)
   const isMobile = useIsMobile()
+  
+  // Apenas para manter a referência ao store (será usado pelos componentes filhos)
+  useSearchStore()
 
   const handleOpenStatusModal = () => {
     setEditingStatus(null) // Limpa qualquer status em edição
@@ -75,11 +81,22 @@ export default function UserDashboardClient() {
 
   return (
     <>
-      {/* Header com botões de ação */}
-      <div className="flex gap-4 mb-6">
-        <AddStatusBtn onOpenModal={handleOpenStatusModal} />
-        <AddLeadBtn onOpenModal={handleOpenLeadSheet} />
-        {!isMobile && <CsvBarDesktop onLeadChange={handleLeadChange} />}
+      {/* Header com botões de ação e busca */}
+      <div className="flex items-center justify-between gap-4 mb-6">
+        {/* Botões à esquerda */}
+        <div className="flex gap-2 flex-shrink-0">
+          <AddStatusBtn onOpenModal={handleOpenStatusModal} />
+          <AddLeadBtn onOpenModal={handleOpenLeadSheet} />
+          {!isMobile && <CsvBarDesktop onLeadChange={handleLeadChange} />}
+        </div>
+        
+        {/* Barra de busca e filtros à direita - apenas desktop */}
+        {!isMobile && (
+          <div className="flex items-center gap-4 flex-1 justify-end">
+            <BarraBuscaDesktop />
+            <BarraFiltrosDesktop />
+          </div>
+        )}
       </div>
 
       {/* Quadro Kanban responsivo */}

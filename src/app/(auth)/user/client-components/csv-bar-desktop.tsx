@@ -443,11 +443,11 @@ export default function CsvBarDesktop({ onImportCsv, onExportCsv, onLeadChange }
           <DropdownMenuTrigger asChild>
             <Button 
               variant="outline"
-              className="gap-2"
+              className="h-9 w-9 p-0"
               disabled={isImporting}
+              title="Importar CSV"
             >
               <Upload className="h-4 w-4" />
-              {isImporting ? "Importando..." : "Importar CSV"}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
@@ -466,12 +466,11 @@ export default function CsvBarDesktop({ onImportCsv, onExportCsv, onLeadChange }
         <Button 
           variant="outline"
           onClick={handleExport}
-          className="gap-2"
-          title="Exportar todos os leads para CSV"
+          className="h-9 w-9 p-0"
+          title="Exportar CSV"
           disabled={isExporting || isImporting}
         >
           <Download className="h-4 w-4" />
-          {isExporting ? "Exportando..." : "Exportar CSV"}
         </Button>
       </div>
     </>

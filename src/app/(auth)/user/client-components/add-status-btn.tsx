@@ -1,6 +1,6 @@
 "use client"
 
-import { Plus } from "lucide-react"
+import { Tag } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 interface AddStatusBtnProps {
@@ -11,10 +11,10 @@ export default function AddStatusBtn({ onOpenModal }: AddStatusBtnProps) {
   return (
     <Button 
       onClick={onOpenModal}
-      className="gap-2"
+      className="h-9 w-9 p-0"
+      title="Adicionar Status"
     >
-      <Plus className="h-4 w-4" />
-      Adicionar Status
+      <Tag className="h-4 w-4" />
     </Button>
   )
 }

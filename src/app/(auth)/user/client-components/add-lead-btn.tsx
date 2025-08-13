@@ -11,10 +11,10 @@ export default function AddLeadBtn({ onOpenModal }: AddLeadBtnProps) {
   return (
     <Button 
       onClick={onOpenModal}
-      className="gap-2"
+      className="h-9 w-9 p-0"
+      title="Adicionar Lead"
     >
       <Plus className="h-4 w-4" />
-      Adicionar Lead
     </Button>
   )
 }

@@ -5,8 +5,8 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
 import { Plus, ChevronLeft, ChevronRight, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import BarraBuscaDesktop from "./barra-busca-desktop"
-import BarraFiltrosDesktop, { SortOption } from "./barra-filtros-desktop"
+import { SortOption } from "./barra-filtros-desktop"
+import { useSearchStore } from "../store/search-store"
 import {
   DndContext,
   DragEndEvent,
@@ -63,15 +63,19 @@ function DroppableColumn({
   )
 }
 
-export default function QuadroKanbanDesktop({ onAddLead, onEditLead, onViewLead, onEditStatus, refreshTrigger }: QuadroKanbanDesktopProps) {
+export default function QuadroKanbanDesktop({ 
+  onAddLead, 
+  onEditLead, 
+  onViewLead, 
+  onEditStatus, 
+  refreshTrigger
+}: QuadroKanbanDesktopProps) {
   const [columns, setColumns] = useState<Record<string, ColumnData>>({})
   const [allStatus, setAllStatus] = useState<Status[]>([])
   const [isLoadingStatus, setIsLoadingStatus] = useState(true)
   const [activeLead, setActiveLead] = useState<Lead | null>(null)
-  
-  // Estados para busca e filtros
-  const [searchTerm, setSearchTerm] = useState("")
-  const [sortBy, setSortBy] = useState<SortOption>('none')
+
+  const { searchTerm, sortBy, setStats } = useSearchStore()
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -162,6 +166,11 @@ export default function QuadroKanbanDesktop({ onAddLead, onEditLead, onViewLead,
     const filtered = Object.values(filteredColumns).reduce((sum, col) => sum + col.leads.length, 0)
     return { totalLeads: total, filteredLeads: filtered }
   }, [columns, filteredColumns])
+
+  // Notificar mudanças nas estatísticas
+  useEffect(() => {
+    setStats(totalLeads, filteredLeads)
+  }, [totalLeads, filteredLeads, setStats])
 
   // Carrega todos os status
   const loadStatus = useCallback(async () => {
@@ -458,20 +467,6 @@ export default function QuadroKanbanDesktop({ onAddLead, onEditLead, onViewLead,
 
   return (
     <div className="w-full h-full flex flex-col">
-      {/* Barra de busca e filtros */}
-      <div className="flex items-center gap-4 mb-6 px-1">
-        <BarraBuscaDesktop
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-        />
-        <BarraFiltrosDesktop
-          sortBy={sortBy}
-          onSortChange={setSortBy}
-          totalLeads={totalLeads}
-          filteredLeads={filteredLeads}
-        />
-      </div>
-
       {/* Kanban */}
       <div className="flex-1">
         <DndContext
