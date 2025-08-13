@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
-import { Plus, ChevronLeft, ChevronRight, Trash2 } from "lucide-react"
+import { Plus, ChevronLeft, ChevronRight, Trash2, Tag } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { SortOption } from "./barra-filtros-desktop"
 import { useSearchStore } from "../store/search-store"
@@ -34,6 +34,7 @@ interface QuadroKanbanDesktopProps {
   onEditLead?: (lead: Lead) => void
   onViewLead?: (lead: Lead) => void
   onEditStatus?: (status: Status) => void
+  onAddStatus?: () => void
   refreshTrigger?: number // Trigger para recarregar o kanban
 }
 
@@ -70,6 +71,7 @@ export default function QuadroKanbanDesktop({
   onEditLead, 
   onViewLead, 
   onEditStatus, 
+  onAddStatus,
   refreshTrigger
 }: QuadroKanbanDesktopProps) {
   const [columns, setColumns] = useState<Record<string, ColumnData>>({})
@@ -463,6 +465,25 @@ export default function QuadroKanbanDesktop({
     return <KanbanSkeleton variant="desktop" />
   }
 
+  if (allStatus.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 space-y-4">
+        <div className="text-muted-foreground text-center">
+          Nenhum status encontrado
+        </div>
+        <Button 
+          variant="outline" 
+          size="sm"
+          onClick={onAddStatus}
+          className="gap-2"
+        >
+          Crie seu primeiro status em
+          <Tag className="h-4 w-4" />
+        </Button>
+      </div>
+    )
+  }
+
   return (
     <div className="w-full h-full flex flex-col">
       {/* Kanban */}
@@ -560,8 +581,21 @@ export default function QuadroKanbanDesktop({
                         {column.isLoading ? (
                           <LeadsListSkeleton variant="desktop" count={3} />
                         ) : column.leads.length === 0 ? (
-                          <div className="text-sm text-foreground/70 text-center py-8 border-2 border-dashed border-border/50 rounded-lg min-h-[100px] flex items-center justify-center">
-                            Nenhum lead neste status
+                          <div className="text-sm text-foreground/70 text-center py-12 border-2 border-dashed border-border/50 rounded-lg">
+                            <div className="space-y-2">
+                              <div>Nenhum lead neste status</div>
+                              {onAddLead && (
+                                <Button
+                                  variant="ghost" 
+                                  size="sm"
+                                  onClick={onAddLead}
+                                  className="mt-2 gap-2"
+                                >
+                                  Adicionar primeiro lead em
+                                  <Plus className="h-4 w-4" />
+                                </Button>
+                              )}
+                            </div>
                           </div>
                         ) : (
                           column.leads.map((lead) => (

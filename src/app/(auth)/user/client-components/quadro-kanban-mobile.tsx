@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Plus, ChevronLeft, ChevronRight, ArrowUpDown, Edit, Trash2 } from "lucide-react"
+import { Plus, ChevronLeft, ChevronRight, ArrowUpDown, Edit, Trash2, Tag } from "lucide-react"
 import { toast } from "sonner"
 import { getAllStatus, Status, deleteStatus } from "../data/status"
 import { getLeadsByStatus, Lead, moveLeadToStatus, deleteLead } from "../data/leads"
@@ -25,10 +25,11 @@ interface QuadroKanbanMobileProps {
   onEditLead?: (lead: Lead) => void
   onViewLead?: (lead: Lead) => void
   onEditStatus?: (status: Status) => void
+  onAddStatus?: () => void
   refreshTrigger?: number // Trigger para recarregar o kanban
 }
 
-export default function QuadroKanbanMobile({ onAddLead, onEditLead, onViewLead, onEditStatus, refreshTrigger }: QuadroKanbanMobileProps) {
+export default function QuadroKanbanMobile({ onAddLead, onEditLead, onViewLead, onEditStatus, onAddStatus, refreshTrigger }: QuadroKanbanMobileProps) {
   const [allStatus, setAllStatus] = useState<Status[]>([])
   const [selectedStatusId, setSelectedStatusId] = useState<string>("")
   const [leads, setLeads] = useState<Lead[]>([])
@@ -250,8 +251,14 @@ export default function QuadroKanbanMobile({ onAddLead, onEditLead, onViewLead, 
         <div className="text-muted-foreground text-center">
           Nenhum status encontrado
         </div>
-        <Button variant="outline" size="sm">
-          Criar primeiro status
+        <Button 
+          variant="outline" 
+          size="sm"
+          onClick={onAddStatus}
+          className="gap-2"
+        >
+          Crie seu primeiro status em
+          <Tag className="h-4 w-4" />
         </Button>
       </div>
     )
@@ -391,8 +398,8 @@ export default function QuadroKanbanMobile({ onAddLead, onEditLead, onViewLead, 
                         onClick={onAddLead}
                         className="mt-2"
                       >
-                        <Plus className="h-4 w-4 mr-2" />
-                        Adicionar primeiro lead
+                        Adicionar primeiro lead em
+                        <Plus className="h-4 w-4 ml-2" />
                       </Button>
                     )}
                   </div>

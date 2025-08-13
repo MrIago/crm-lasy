@@ -58,7 +58,7 @@ export default function Home() {
           <CardContent>
             <div className="relative aspect-video rounded-lg overflow-hidden bg-muted">
               <iframe
-                src="https://www.youtube.com/embed/d3HbjAw1w1Q"
+                src="https://www.youtube.com/embed/KXuJnqp8JFc"
                 title="Apresentação Lasy CRM"
                 className="absolute inset-0 w-full h-full"
                 allowFullScreen
@@ -78,7 +78,7 @@ export default function Home() {
             </CardHeader>
             <CardContent className="pt-0">
               <Button variant="outline" className="w-full" asChild>
-                <a href="https://www.loom.com/share/10e7493bfa0c447b87b4005a3b4e6c8a" target="_blank" rel="noopener noreferrer">
+                <a href="https://www.loom.com/share/18767e65dac54ea38a03f43b9d79c358" target="_blank" rel="noopener noreferrer">
                   <ExternalLink className="mr-2 h-4 w-4" />
                   Assistir no Loom
                 </a>
