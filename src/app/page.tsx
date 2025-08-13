@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { CheckCircle, Github, Video, ExternalLink, Users, Shield, Kanban, FileUp, Search, Download, Eye, Clock, Smartphone, Monitor, Zap } from "lucide-react"
+import { CheckCircle, Github, Video, ExternalLink, Users, Shield, Kanban, FileUp, Search, Download, Eye, Clock, Smartphone, Monitor, Zap, Coffee, MessageCircle, Flame, Database, Lock, Palette, Layers, Boxes } from "lucide-react"
 import { useAuthStore } from "@/mr-auth"
 import Link from "next/link"
 
@@ -265,25 +265,119 @@ export default function Home() {
         <Card className="max-w-4xl mx-auto">
           <CardHeader className="text-center">
             <CardTitle>Stack Tecnológica</CardTitle>
-            <CardDescription>Tecnologias modernas utilizadas no desenvolvimento</CardDescription>
+            <CardDescription>Principais tecnologias utilizadas no desenvolvimento</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Badge variant="secondary" className="justify-center p-3">Next.js 14</Badge>
-              <Badge variant="secondary" className="justify-center p-3">TypeScript</Badge>
-              <Badge variant="secondary" className="justify-center p-3">Firebase</Badge>
-              <Badge variant="secondary" className="justify-center p-3">Tailwind CSS</Badge>
-              <Badge variant="secondary" className="justify-center p-3">Shadcn/ui</Badge>
-              <Badge variant="secondary" className="justify-center p-3">Zustand</Badge>
-              <Badge variant="secondary" className="justify-center p-3">DND Kit</Badge>
-              <Badge variant="secondary" className="justify-center p-3">React Hook Form</Badge>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+              <div className="flex flex-col items-center space-y-3 p-4 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
+                <div className="flex items-center gap-2">
+                  <Flame className="h-5 w-5 text-orange-500" />
+                  <Badge variant="outline" className="text-sm px-3 py-1">Next.js 15</Badge>
+                </div>
+                <span className="text-sm text-muted-foreground text-center">Framework React</span>
+              </div>
+              
+              <div className="flex flex-col items-center space-y-3 p-4 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
+                <div className="flex items-center gap-2">
+                  <Database className="h-5 w-5 text-yellow-500" />
+                  <Badge variant="outline" className="text-sm px-3 py-1">Firestore</Badge>
+                </div>
+                <span className="text-sm text-muted-foreground text-center">NoSQL Database</span>
+              </div>
+              
+              <div className="flex flex-col items-center space-y-3 p-4 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
+                <div className="flex items-center gap-2">
+                  <Lock className="h-5 w-5 text-red-500" />
+                  <Badge variant="outline" className="text-sm px-3 py-1">Firebase Auth</Badge>
+                </div>
+                <span className="text-sm text-muted-foreground text-center">Autenticação</span>
+              </div>
+              
+              <div className="flex flex-col items-center space-y-3 p-4 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
+                <div className="flex items-center gap-2">
+                  <Boxes className="h-5 w-5 text-blue-500" />
+                  <Badge variant="outline" className="text-sm px-3 py-1">Shadcn/ui</Badge>
+                </div>
+                <span className="text-sm text-muted-foreground text-center">Componentes UI</span>
+              </div>
+              
+              <div className="flex flex-col items-center space-y-3 p-4 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
+                <div className="flex items-center gap-2">
+                  <Palette className="h-5 w-5 text-cyan-500" />
+                  <Badge variant="outline" className="text-sm px-3 py-1">Tailwind CSS</Badge>
+                </div>
+                <span className="text-sm text-muted-foreground text-center">Styling</span>
+              </div>
+              
+              <div className="flex flex-col items-center space-y-3 p-4 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
+                <div className="flex items-center gap-2">
+                  <Layers className="h-5 w-5 text-purple-500" />
+                  <Badge variant="outline" className="text-sm px-3 py-1">Zustand</Badge>
+                </div>
+                <span className="text-sm text-muted-foreground text-center">State Management</span>
+              </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Footer */}
-        <div className="text-center text-muted-foreground">
-          <p>Desenvolvido com ❤️ para o teste prático da Lasy.ai</p>
+        <div className="text-center space-y-4">
+          <div className="flex items-center justify-center gap-2 text-muted-foreground">
+            <span>Feito com muito</span>
+            <span className="text-red-500">❤️</span>
+            <span>e</span>
+            <Coffee className="h-4 w-4" />
+            <span>por</span>
+            <a 
+              href="https://www.youtube.com/@mriago" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="font-medium text-foreground hover:text-primary transition-colors underline"
+            >
+              Mr.IAgo
+            </a>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Com auxílio de IA, usando GitHub Copilot com Claude Sonnet 4
+          </p>
+          <div className="flex items-center justify-center gap-6 pt-4">
+            <a 
+              href="https://github.com/MrIago" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <Github className="h-4 w-4" />
+              GitHub Pessoal
+            </a>
+            <a 
+              href="https://github.com/MrIagoUFV" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <Github className="h-4 w-4" />
+              GitHub Faculdade
+            </a>
+            <a 
+              href="https://www.instagram.com/mriago/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <ExternalLink className="h-4 w-4" />
+              Instagram
+            </a>
+            <a 
+              href="https://wa.me/5522999675358" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <MessageCircle className="h-4 w-4" />
+              WhatsApp
+            </a>
+          </div>
         </div>
       </div>
     </div>
