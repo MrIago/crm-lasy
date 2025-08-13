@@ -20,6 +20,7 @@ export default function UserDashboardClient() {
   const [editingLead, setEditingLead] = useState<Lead | null>(null)
   const [viewingLead, setViewingLead] = useState<Lead | null>(null)
   const [editingStatus, setEditingStatus] = useState<Status | null>(null)
+  const [kanbanRefreshTrigger, setKanbanRefreshTrigger] = useState(0)
   const isMobile = useIsMobile()
 
   const handleOpenStatusModal = () => {
@@ -35,6 +36,11 @@ export default function UserDashboardClient() {
   const handleCloseStatusModal = () => {
     setIsStatusModalOpen(false)
     setEditingStatus(null) // Limpa o status em edição ao fechar
+  }
+
+  const handleStatusChange = () => {
+    // Incrementa o trigger para recarregar o kanban
+    setKanbanRefreshTrigger(prev => prev + 1)
   }
 
   const handleOpenLeadSheet = () => {
@@ -79,6 +85,7 @@ export default function UserDashboardClient() {
             onEditLead={handleEditLead}
             onViewLead={handleViewLead}
             onEditStatus={handleEditStatus}
+            refreshTrigger={kanbanRefreshTrigger}
           />
         ) : (
           <QuadroKanbanDesktop 
@@ -86,6 +93,7 @@ export default function UserDashboardClient() {
             onEditLead={handleEditLead}
             onViewLead={handleViewLead}
             onEditStatus={handleEditStatus}
+            refreshTrigger={kanbanRefreshTrigger}
           />
         )}
       </div>
@@ -95,6 +103,7 @@ export default function UserDashboardClient() {
         isOpen={isStatusModalOpen} 
         onClose={handleCloseStatusModal}
         editStatus={editingStatus}
+        onStatusChange={handleStatusChange}
       />
       <AddLeadSheet 
         isOpen={isLeadSheetOpen} 

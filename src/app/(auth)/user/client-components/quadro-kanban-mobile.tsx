@@ -23,9 +23,10 @@ interface QuadroKanbanMobileProps {
   onEditLead?: (lead: Lead) => void
   onViewLead?: (lead: Lead) => void
   onEditStatus?: (status: Status) => void
+  refreshTrigger?: number // Trigger para recarregar o kanban
 }
 
-export default function QuadroKanbanMobile({ onAddLead, onEditLead, onViewLead, onEditStatus }: QuadroKanbanMobileProps) {
+export default function QuadroKanbanMobile({ onAddLead, onEditLead, onViewLead, onEditStatus, refreshTrigger }: QuadroKanbanMobileProps) {
   const [allStatus, setAllStatus] = useState<Status[]>([])
   const [selectedStatusId, setSelectedStatusId] = useState<string>("")
   const [leads, setLeads] = useState<Lead[]>([])
@@ -110,6 +111,13 @@ export default function QuadroKanbanMobile({ onAddLead, onEditLead, onViewLead, 
   useEffect(() => {
     loadStatus()
   }, [loadStatus])
+
+  // Recarrega quando refreshTrigger mudar
+  useEffect(() => {
+    if (refreshTrigger !== undefined) {
+      loadStatus()
+    }
+  }, [refreshTrigger, loadStatus])
 
   // Carrega leads quando o status selecionado muda
   useEffect(() => {

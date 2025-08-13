@@ -18,6 +18,7 @@ interface AddStatusModalProps {
   isOpen: boolean
   onClose: () => void
   editStatus?: Status | null
+  onStatusChange?: () => void // Callback para quando um status for criado ou editado
 }
 
 const colorOptions = [
@@ -29,7 +30,7 @@ const colorOptions = [
   { name: 'Vermelho', value: 'red', bgClass: 'bg-[var(--color-red)]' },
 ]
 
-export default function AddStatusModal({ isOpen, onClose, editStatus }: AddStatusModalProps) {
+export default function AddStatusModal({ isOpen, onClose, editStatus, onStatusChange }: AddStatusModalProps) {
   const [title, setTitle] = useState("")
   const [selectedColor, setSelectedColor] = useState<string>("gray")
   const [isLoading, setIsLoading] = useState(false)
@@ -66,6 +67,7 @@ export default function AddStatusModal({ isOpen, onClose, editStatus }: AddStatu
 
         if (result.success) {
           toast.success("Status atualizado com sucesso!")
+          onStatusChange?.() // Chama o callback para recarregar o kanban
           handleCancel()
         } else {
           toast.error(result.error || "Erro ao atualizar status")
@@ -79,6 +81,7 @@ export default function AddStatusModal({ isOpen, onClose, editStatus }: AddStatu
 
         if (result.success) {
           toast.success("Status criado com sucesso!")
+          onStatusChange?.() // Chama o callback para recarregar o kanban
           handleCancel()
         } else {
           toast.error(result.error || "Erro ao criar status")

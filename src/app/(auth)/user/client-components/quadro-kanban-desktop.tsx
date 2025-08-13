@@ -32,6 +32,7 @@ interface QuadroKanbanDesktopProps {
   onEditLead?: (lead: Lead) => void
   onViewLead?: (lead: Lead) => void
   onEditStatus?: (status: Status) => void
+  refreshTrigger?: number // Trigger para recarregar o kanban
 }
 
 interface ColumnData {
@@ -62,7 +63,7 @@ function DroppableColumn({
   )
 }
 
-export default function QuadroKanbanDesktop({ onAddLead, onEditLead, onViewLead, onEditStatus }: QuadroKanbanDesktopProps) {
+export default function QuadroKanbanDesktop({ onAddLead, onEditLead, onViewLead, onEditStatus, refreshTrigger }: QuadroKanbanDesktopProps) {
   const [columns, setColumns] = useState<Record<string, ColumnData>>({})
   const [allStatus, setAllStatus] = useState<Status[]>([])
   const [isLoadingStatus, setIsLoadingStatus] = useState(true)
@@ -226,6 +227,13 @@ export default function QuadroKanbanDesktop({ onAddLead, onEditLead, onViewLead,
   useEffect(() => {
     loadStatus()
   }, [loadStatus])
+
+  // Recarrega quando refreshTrigger mudar
+  useEffect(() => {
+    if (refreshTrigger !== undefined) {
+      loadStatus()
+    }
+  }, [refreshTrigger, loadStatus])
 
   // Carrega leads quando os status são carregados
   useEffect(() => {
