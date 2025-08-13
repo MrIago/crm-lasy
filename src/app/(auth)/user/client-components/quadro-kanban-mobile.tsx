@@ -17,6 +17,8 @@ import { getAllStatus, Status, deleteStatus } from "../data/status"
 import { getLeadsByStatus, Lead, moveLeadToStatus, deleteLead } from "../data/leads"
 import CardLeadMobile from "./card-lead-mobile"
 import MoveItensMobile from "./move-itens-mobile"
+import { KanbanSkeleton } from "./status-skeleton"
+import { LeadsListSkeleton } from "./leads-skeleton"
 
 interface QuadroKanbanMobileProps {
   onAddLead?: () => void
@@ -239,11 +241,7 @@ export default function QuadroKanbanMobile({ onAddLead, onEditLead, onViewLead, 
   const currentStatus = allStatus.find(s => s.id === selectedStatusId)
 
   if (isLoadingStatus) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-muted-foreground">Carregando kanban...</div>
-      </div>
-    )
+    return <KanbanSkeleton variant="mobile" />
   }
 
   if (allStatus.length === 0) {
@@ -381,9 +379,7 @@ export default function QuadroKanbanMobile({ onAddLead, onEditLead, onViewLead, 
           <ScrollArea className="h-[calc(100vh-12rem)]">
             <div className="space-y-3 pr-2">
               {isLoadingLeads ? (
-                <div className="text-sm text-foreground/70 text-center py-8">
-                  Carregando leads...
-                </div>
+                <LeadsListSkeleton variant="mobile" count={4} />
               ) : leads.length === 0 ? (
                 <div className="text-sm text-foreground/70 text-center py-12 border-2 border-dashed border-border/50 rounded-lg">
                   <div className="space-y-2">

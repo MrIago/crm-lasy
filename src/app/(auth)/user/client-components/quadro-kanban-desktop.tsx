@@ -26,6 +26,8 @@ import { toast } from "sonner"
 import { getAllStatus, Status, reorderStatus, deleteStatus } from "../data/status"
 import { getLeadsByStatus, Lead, moveLeadToStatus, reorderLead, deleteLead } from "../data/leads"
 import CardLeadDesktop from "./card-lead-desktop"
+import { KanbanSkeleton } from "./status-skeleton"
+import { LeadsListSkeleton } from "./leads-skeleton"
 
 interface QuadroKanbanDesktopProps {
   onAddLead?: () => void
@@ -458,11 +460,7 @@ export default function QuadroKanbanDesktop({
   }
 
   if (isLoadingStatus) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-muted-foreground">Carregando kanban...</div>
-      </div>
-    )
+    return <KanbanSkeleton variant="desktop" />
   }
 
   return (
@@ -560,9 +558,7 @@ export default function QuadroKanbanDesktop({
                     >
                       <div className="space-y-3 pr-2 min-h-[200px]">
                         {column.isLoading ? (
-                          <div className="text-sm text-foreground/70 text-center py-8">
-                            Carregando leads...
-                          </div>
+                          <LeadsListSkeleton variant="desktop" count={3} />
                         ) : column.leads.length === 0 ? (
                           <div className="text-sm text-foreground/70 text-center py-8 border-2 border-dashed border-border/50 rounded-lg min-h-[100px] flex items-center justify-center">
                             Nenhum lead neste status
