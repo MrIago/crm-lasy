@@ -42,6 +42,18 @@ export default function QuadroKanbanMobile({ onAddLead }: QuadroKanbanMobileProp
     return colorMap[color] || colorMap.gray
   }
 
+  const getColumnBackgroundColor = (color: string) => {
+    const backgroundColorMap: Record<string, string> = {
+      gray: "bg-gray-50/50",
+      blue: "bg-blue-50/50",
+      yellow: "bg-yellow-50/50",
+      orange: "bg-orange-50/50",
+      green: "bg-green-50/50",
+      red: "bg-red-50/50",
+    }
+    return backgroundColorMap[color] || backgroundColorMap.gray
+  }
+
   // Carrega todos os status
   const loadStatus = useCallback(async () => {
     setIsLoadingStatus(true)
@@ -181,7 +193,7 @@ export default function QuadroKanbanMobile({ onAddLead }: QuadroKanbanMobileProp
   }
 
   return (
-    <div className="w-full h-full space-y-4">
+    <div className={`w-full h-full space-y-4 p-4 rounded-lg ${currentStatus ? getColumnBackgroundColor(currentStatus.color) : 'bg-muted/30'}`}>
       {/* Seletor de status */}
       <div className="flex items-center gap-2">
         <Button
@@ -275,11 +287,11 @@ export default function QuadroKanbanMobile({ onAddLead }: QuadroKanbanMobileProp
           <ScrollArea className="h-[calc(100vh-12rem)]">
             <div className="space-y-3 pr-2">
               {isLoadingLeads ? (
-                <div className="text-sm text-muted-foreground text-center py-8">
+                <div className="text-sm text-foreground/70 text-center py-8">
                   Carregando leads...
                 </div>
               ) : leads.length === 0 ? (
-                <div className="text-sm text-muted-foreground text-center py-12 border-2 border-dashed border-muted-foreground/25 rounded-lg">
+                <div className="text-sm text-foreground/70 text-center py-12 border-2 border-dashed border-border/50 rounded-lg">
                   <div className="space-y-2">
                     <div>Nenhum lead neste status</div>
                     {onAddLead && (

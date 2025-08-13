@@ -83,6 +83,18 @@ export default function QuadroKanbanDesktop({ onAddLead }: QuadroKanbanDesktopPr
     return colorMap[color] || colorMap.gray
   }
 
+  const getColumnBackgroundColor = (color: string) => {
+    const backgroundColorMap: Record<string, string> = {
+      gray: "bg-gray-50/50",
+      blue: "bg-blue-50/50",
+      yellow: "bg-yellow-50/50",
+      orange: "bg-orange-50/50",
+      green: "bg-green-50/50",
+      red: "bg-red-50/50",
+    }
+    return backgroundColorMap[color] || backgroundColorMap.gray
+  }
+
   // Carrega todos os status
   const loadStatus = useCallback(async () => {
     setIsLoadingStatus(true)
@@ -339,7 +351,7 @@ export default function QuadroKanbanDesktop({ onAddLead }: QuadroKanbanDesktopPr
             return (
               <div
                 key={status.id}
-                className="flex-shrink-0 w-80 bg-muted/30 rounded-lg p-4"
+                className={`flex-shrink-0 w-80 rounded-lg p-4 ${getColumnBackgroundColor(status.color)}`}
               >
                 {/* Header da coluna */}
                 <div className="flex items-center justify-between mb-4">
@@ -401,11 +413,11 @@ export default function QuadroKanbanDesktop({ onAddLead }: QuadroKanbanDesktopPr
                     >
                       <div className="space-y-3 pr-2 min-h-[200px]">
                         {column.isLoading ? (
-                          <div className="text-sm text-muted-foreground text-center py-8">
+                          <div className="text-sm text-foreground/70 text-center py-8">
                             Carregando leads...
                           </div>
                         ) : column.leads.length === 0 ? (
-                          <div className="text-sm text-muted-foreground text-center py-8 border-2 border-dashed border-muted-foreground/25 rounded-lg min-h-[100px] flex items-center justify-center">
+                          <div className="text-sm text-foreground/70 text-center py-8 border-2 border-dashed border-border/50 rounded-lg min-h-[100px] flex items-center justify-center">
                             Nenhum lead neste status
                           </div>
                         ) : (
