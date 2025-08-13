@@ -78,7 +78,7 @@ export default function Home() {
             </CardHeader>
             <CardContent className="pt-0">
               <Button variant="outline" className="w-full" asChild>
-                <a href="https://www.loom.com/share/18767e65dac54ea38a03f43b9d79c358" target="_blank" rel="noopener noreferrer">
+                <a href="https://www.loom.com/share/10e7493bfa0c447b87b4005a3b4e6c8a" target="_blank" rel="noopener noreferrer">
                   <ExternalLink className="mr-2 h-4 w-4" />
                   Assistir no Loom
                 </a>
@@ -95,7 +95,7 @@ export default function Home() {
             </CardHeader>
             <CardContent className="pt-0">
               <Button variant="outline" className="w-full" asChild>
-                <a href="https://www.loom.com/share/10e7493bfa0c447b87b4005a3b4e6c8a" target="_blank" rel="noopener noreferrer">
+                <a href="https://www.loom.com/share/18767e65dac54ea38a03f43b9d79c358" target="_blank" rel="noopener noreferrer">
                   <ExternalLink className="mr-2 h-4 w-4" />
                   Assistir no Loom
                 </a>
