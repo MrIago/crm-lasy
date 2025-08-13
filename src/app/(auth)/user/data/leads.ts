@@ -18,6 +18,12 @@ export interface InteractionHistory {
   notes: string
 }
 
+// Interface para dados do Firestore (com timestamp do Firestore)
+interface FirestoreInteraction {
+  date?: { toDate(): Date }
+  notes: string
+}
+
 export interface Lead {
   id: string
   name: string
@@ -190,7 +196,7 @@ export async function getAllLeads(): Promise<{ leads: Lead[]; error?: string }> 
           company: data.company,
           observations: data.observations,
           statusId: statusDoc.id,
-          interactions: data.interactions?.map((interaction: any) => ({
+          interactions: data.interactions?.map((interaction: FirestoreInteraction) => ({
             date: interaction.date?.toDate() || new Date(),
             notes: interaction.notes
           })) || [],
@@ -241,7 +247,7 @@ export async function getLeadsByStatus(statusId: string): Promise<{ leads: Lead[
         company: data.company,
         observations: data.observations,
         statusId: statusId,
-        interactions: data.interactions?.map((interaction: any) => ({
+        interactions: data.interactions?.map((interaction: FirestoreInteraction) => ({
           date: interaction.date?.toDate() || new Date(),
           notes: interaction.notes
         })) || [],
@@ -292,7 +298,7 @@ export async function readLead(statusId: string, id: string): Promise<{ lead: Le
       company: data.company,
       observations: data.observations,
       statusId: statusId,
-      interactions: data.interactions?.map((interaction: any) => ({
+      interactions: data.interactions?.map((interaction: FirestoreInteraction) => ({
         date: interaction.date?.toDate() || new Date(),
         notes: interaction.notes
       })) || [],
@@ -332,7 +338,15 @@ export async function updateLead(statusId: string, id: string, data: Partial<Cre
       return { success: false, error: 'Lead não encontrado' }
     }
 
-    const updateData: any = {
+    const updateData: {
+      updatedAt: Date
+      name?: string
+      email?: string
+      phone?: string
+      company?: string
+      observations?: string
+      interactions?: InteractionHistory[]
+    } = {
       updatedAt: new Date()
     }
 
