@@ -59,7 +59,7 @@ export default function UserDashboardClient() {
       <div className="flex gap-4 mb-6">
         <AddStatusBtn onOpenModal={handleOpenStatusModal} />
         <AddLeadBtn onOpenModal={handleOpenLeadSheet} />
-        <CsvBarDesktop />
+        {!isMobile && <CsvBarDesktop />}
       </div>
 
       {/* Quadro Kanban responsivo */}
