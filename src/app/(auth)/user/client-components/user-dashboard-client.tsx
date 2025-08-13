@@ -11,6 +11,7 @@ import CsvBarDesktop from "./csv-bar-desktop"
 import QuadroKanbanDesktop from "./quadro-kanban-desktop"
 import QuadroKanbanMobile from "./quadro-kanban-mobile"
 import { Lead } from "../data/leads"
+import { Status } from "../data/status"
 
 export default function UserDashboardClient() {
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false)
@@ -18,14 +19,22 @@ export default function UserDashboardClient() {
   const [isViewLeadSheetOpen, setIsViewLeadSheetOpen] = useState(false)
   const [editingLead, setEditingLead] = useState<Lead | null>(null)
   const [viewingLead, setViewingLead] = useState<Lead | null>(null)
+  const [editingStatus, setEditingStatus] = useState<Status | null>(null)
   const isMobile = useIsMobile()
 
   const handleOpenStatusModal = () => {
+    setEditingStatus(null) // Limpa qualquer status em edição
+    setIsStatusModalOpen(true)
+  }
+
+  const handleEditStatus = (status: Status) => {
+    setEditingStatus(status)
     setIsStatusModalOpen(true)
   }
 
   const handleCloseStatusModal = () => {
     setIsStatusModalOpen(false)
+    setEditingStatus(null) // Limpa o status em edição ao fechar
   }
 
   const handleOpenLeadSheet = () => {
@@ -69,18 +78,24 @@ export default function UserDashboardClient() {
             onAddLead={handleOpenLeadSheet}
             onEditLead={handleEditLead}
             onViewLead={handleViewLead}
+            onEditStatus={handleEditStatus}
           />
         ) : (
           <QuadroKanbanDesktop 
             onAddLead={handleOpenLeadSheet}
             onEditLead={handleEditLead}
             onViewLead={handleViewLead}
+            onEditStatus={handleEditStatus}
           />
         )}
       </div>
 
       {/* Modais */}
-      <AddStatusModal isOpen={isStatusModalOpen} onClose={handleCloseStatusModal} />
+      <AddStatusModal 
+        isOpen={isStatusModalOpen} 
+        onClose={handleCloseStatusModal}
+        editStatus={editingStatus}
+      />
       <AddLeadSheet 
         isOpen={isLeadSheetOpen} 
         onClose={handleCloseLeadSheet}

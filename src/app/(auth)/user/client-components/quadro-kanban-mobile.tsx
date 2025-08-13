@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Plus, ChevronLeft, ChevronRight, ArrowUpDown } from "lucide-react"
+import { Plus, ChevronLeft, ChevronRight, ArrowUpDown, Edit } from "lucide-react"
 import { toast } from "sonner"
 import { getAllStatus, Status } from "../data/status"
 import { getLeadsByStatus, Lead, moveLeadToStatus, deleteLead } from "../data/leads"
@@ -22,9 +22,10 @@ interface QuadroKanbanMobileProps {
   onAddLead?: () => void
   onEditLead?: (lead: Lead) => void
   onViewLead?: (lead: Lead) => void
+  onEditStatus?: (status: Status) => void
 }
 
-export default function QuadroKanbanMobile({ onAddLead, onEditLead, onViewLead }: QuadroKanbanMobileProps) {
+export default function QuadroKanbanMobile({ onAddLead, onEditLead, onViewLead, onEditStatus }: QuadroKanbanMobileProps) {
   const [allStatus, setAllStatus] = useState<Status[]>([])
   const [selectedStatusId, setSelectedStatusId] = useState<string>("")
   const [leads, setLeads] = useState<Lead[]>([])
@@ -246,6 +247,21 @@ export default function QuadroKanbanMobile({ onAddLead, onEditLead, onViewLead }
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
+              {/* Botão de editar status atual */}
+              {currentStatus && onEditStatus && (
+                <div className="px-2 py-1 border-b">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onEditStatus(currentStatus)}
+                    className="w-full justify-start gap-2 h-8"
+                  >
+                    <Edit className="h-4 w-4" />
+                    Editar "{currentStatus.title}"
+                  </Button>
+                </div>
+              )}
+              
               {allStatus.map((status) => (
                 <SelectItem key={status.id} value={status.id}>
                   <div className="flex items-center gap-2">

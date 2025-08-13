@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   Sheet,
   SheetContent,
@@ -11,12 +11,13 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { createStatus } from "../data/status"
+import { createStatus, updateStatus, Status } from "../data/status"
 import { toast } from "sonner"
 
 interface AddStatusModalProps {
   isOpen: boolean
   onClose: () => void
+  editStatus?: Status | null
 }
 
 const colorOptions = [
@@ -28,10 +29,24 @@ const colorOptions = [
   { name: 'Vermelho', value: 'red', bgClass: 'bg-[var(--color-red)]' },
 ]
 
-export default function AddStatusModal({ isOpen, onClose }: AddStatusModalProps) {
+export default function AddStatusModal({ isOpen, onClose, editStatus }: AddStatusModalProps) {
   const [title, setTitle] = useState("")
   const [selectedColor, setSelectedColor] = useState<string>("gray")
   const [isLoading, setIsLoading] = useState(false)
+
+  const isEditing = Boolean(editStatus)
+
+  // Effect para preencher dados na edição
+  useEffect(() => {
+    if (editStatus && isOpen) {
+      setTitle(editStatus.title)
+      setSelectedColor(editStatus.color)
+    } else if (!editStatus && isOpen) {
+      // Reset form for new status
+      setTitle("")
+      setSelectedColor("gray")
+    }
+  }, [editStatus, isOpen])
 
   const handleSubmit = async () => {
     if (!title.trim()) {
@@ -42,22 +57,36 @@ export default function AddStatusModal({ isOpen, onClose }: AddStatusModalProps)
     setIsLoading(true)
     
     try {
-      const result = await createStatus({
-        title: title.trim(),
-        color: selectedColor
-      })
+      if (isEditing && editStatus) {
+        // Modo edição
+        const result = await updateStatus(editStatus.id, {
+          title: title.trim(),
+          color: selectedColor
+        })
 
-      if (result.success) {
-        toast.success("Status criado com sucesso!")
-        onClose()
-        setTitle("")
-        setSelectedColor("gray")
+        if (result.success) {
+          toast.success("Status atualizado com sucesso!")
+          handleCancel()
+        } else {
+          toast.error(result.error || "Erro ao atualizar status")
+        }
       } else {
-        toast.error(result.error || "Erro ao criar status")
+        // Modo criação
+        const result = await createStatus({
+          title: title.trim(),
+          color: selectedColor
+        })
+
+        if (result.success) {
+          toast.success("Status criado com sucesso!")
+          handleCancel()
+        } else {
+          toast.error(result.error || "Erro ao criar status")
+        }
       }
     } catch (error) {
-      console.error("Erro ao criar status:", error)
-      toast.error("Erro inesperado ao criar status")
+      console.error(`Erro ao ${isEditing ? 'atualizar' : 'criar'} status:`, error)
+      toast.error(`Erro inesperado ao ${isEditing ? 'atualizar' : 'criar'} status`)
     } finally {
       setIsLoading(false)
     }
@@ -79,9 +108,14 @@ export default function AddStatusModal({ isOpen, onClose }: AddStatusModalProps)
       >
         <div className="bg-background rounded-lg mx-4 mt-4 mb-6 p-6 sm:p-8">
           <SheetHeader className="space-y-3">
-            <SheetTitle className="text-xl">Novo Status</SheetTitle>
+            <SheetTitle className="text-xl">
+              {isEditing ? "Editar Status" : "Novo Status"}
+            </SheetTitle>
             <SheetDescription>
-              Crie um novo status para organizar seus itens.
+              {isEditing
+                ? "Edite as informações do status."
+                : "Crie um novo status para organizar seus itens."
+              }
             </SheetDescription>
           </SheetHeader>
 
@@ -144,7 +178,10 @@ export default function AddStatusModal({ isOpen, onClose }: AddStatusModalProps)
                 disabled={!title.trim() || isLoading}
                 className="sm:w-auto"
               >
-                {isLoading ? "Criando..." : "Criar Status"}
+                {isLoading 
+                  ? (isEditing ? "Atualizando..." : "Criando...") 
+                  : (isEditing ? "Atualizar Status" : "Criar Status")
+                }
               </Button>
             </div>
           </div>

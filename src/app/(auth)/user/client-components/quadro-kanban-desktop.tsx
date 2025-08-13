@@ -31,6 +31,7 @@ interface QuadroKanbanDesktopProps {
   onAddLead?: () => void
   onEditLead?: (lead: Lead) => void
   onViewLead?: (lead: Lead) => void
+  onEditStatus?: (status: Status) => void
 }
 
 interface ColumnData {
@@ -61,7 +62,7 @@ function DroppableColumn({
   )
 }
 
-export default function QuadroKanbanDesktop({ onAddLead, onEditLead, onViewLead }: QuadroKanbanDesktopProps) {
+export default function QuadroKanbanDesktop({ onAddLead, onEditLead, onViewLead, onEditStatus }: QuadroKanbanDesktopProps) {
   const [columns, setColumns] = useState<Record<string, ColumnData>>({})
   const [allStatus, setAllStatus] = useState<Status[]>([])
   const [isLoadingStatus, setIsLoadingStatus] = useState(true)
@@ -471,7 +472,9 @@ export default function QuadroKanbanDesktop({ onAddLead, onEditLead, onViewLead 
                       
                       <Badge 
                         variant="outline"
-                        className={`${getStatusColor(status.color)} font-medium`}
+                        className={`${getStatusColor(status.color)} font-medium cursor-pointer hover:opacity-80 transition-opacity`}
+                        onClick={() => onEditStatus?.(status)}
+                        title="Clique para editar este status"
                       >
                         {status.title}
                       </Badge>
