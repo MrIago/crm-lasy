@@ -1,10 +1,12 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
 import { Plus, ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import BarraBuscaDesktop from "./barra-busca-desktop"
+import BarraFiltrosDesktop, { SortOption } from "./barra-filtros-desktop"
 import {
   DndContext,
   DragEndEvent,
@@ -64,6 +66,10 @@ export default function QuadroKanbanDesktop({ onAddLead, onEditLead, onViewLead 
   const [allStatus, setAllStatus] = useState<Status[]>([])
   const [isLoadingStatus, setIsLoadingStatus] = useState(true)
   const [activeLead, setActiveLead] = useState<Lead | null>(null)
+  
+  // Estados para busca e filtros
+  const [searchTerm, setSearchTerm] = useState("")
+  const [sortBy, setSortBy] = useState<SortOption>('none')
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -96,6 +102,64 @@ export default function QuadroKanbanDesktop({ onAddLead, onEditLead, onViewLead 
     }
     return backgroundColorMap[color] || backgroundColorMap.gray
   }
+
+  // Função para filtrar leads por busca
+  const filterLeadsBySearch = useCallback((leads: Lead[], term: string): Lead[] => {
+    if (!term.trim()) return leads
+    
+    const searchTerm = term.toLowerCase()
+    return leads.filter(lead => 
+      lead.name.toLowerCase().includes(searchTerm) ||
+      lead.email.toLowerCase().includes(searchTerm) ||
+      lead.company.toLowerCase().includes(searchTerm) ||
+      lead.phone.includes(searchTerm) ||
+      lead.observations.toLowerCase().includes(searchTerm)
+    )
+  }, [])
+
+  // Função para ordenar leads
+  const sortLeads = useCallback((leads: Lead[], sortOption: SortOption): Lead[] => {
+    if (sortOption === 'none') return leads
+
+    const sorted = [...leads]
+    
+    switch (sortOption) {
+      case 'name-asc':
+        return sorted.sort((a, b) => a.name.localeCompare(b.name))
+      case 'name-desc':
+        return sorted.sort((a, b) => b.name.localeCompare(a.name))
+      case 'date-newest':
+        return sorted.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      case 'date-oldest':
+        return sorted.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+      default:
+        return sorted
+    }
+  }, [])
+
+  // Aplicar filtros e ordenação aos leads
+  const filteredColumns = useMemo(() => {
+    const result: Record<string, ColumnData> = {}
+    
+    Object.entries(columns).forEach(([statusId, column]) => {
+      const filtered = filterLeadsBySearch(column.leads, searchTerm)
+      const sorted = sortLeads(filtered, sortBy)
+      
+      result[statusId] = {
+        ...column,
+        leads: sorted
+      }
+    })
+    
+    return result
+  }, [columns, searchTerm, sortBy, filterLeadsBySearch, sortLeads])
+
+  // Calcular estatísticas para os filtros
+  const { totalLeads, filteredLeads } = useMemo(() => {
+    const total = Object.values(columns).reduce((sum, col) => sum + col.leads.length, 0)
+    const filtered = Object.values(filteredColumns).reduce((sum, col) => sum + col.leads.length, 0)
+    return { totalLeads: total, filteredLeads: filtered }
+  }, [columns, filteredColumns])
 
   // Carrega todos os status
   const loadStatus = useCallback(async () => {
@@ -357,16 +421,32 @@ export default function QuadroKanbanDesktop({ onAddLead, onEditLead, onViewLead 
   }
 
   return (
-    <div className="w-full h-full">
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCorners}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-      >
+    <div className="w-full h-full flex flex-col">
+      {/* Barra de busca e filtros */}
+      <div className="flex items-center gap-4 mb-6 px-1">
+        <BarraBuscaDesktop
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+        />
+        <BarraFiltrosDesktop
+          sortBy={sortBy}
+          onSortChange={setSortBy}
+          totalLeads={totalLeads}
+          filteredLeads={filteredLeads}
+        />
+      </div>
+
+      {/* Kanban */}
+      <div className="flex-1">
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCorners}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+        >
         <div className="flex gap-6 h-full overflow-x-auto pb-4">
           {allStatus.map((status, index) => {
-            const column = columns[status.id]
+            const column = filteredColumns[status.id]
             if (!column) return null
 
             return (
@@ -477,6 +557,7 @@ export default function QuadroKanbanDesktop({ onAddLead, onEditLead, onViewLead 
           ) : null}
         </DragOverlay>
       </DndContext>
+      </div>
     </div>
   )
 }
