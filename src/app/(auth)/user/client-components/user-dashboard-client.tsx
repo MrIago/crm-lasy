@@ -7,6 +7,7 @@ import AddStatusModal from "./add-status-modal"
 import AddLeadBtn from "./add-lead-btn"
 import AddLeadSheet from "./add-lead-sheet"
 import ViewLeadSheet from "./view-lead-sheet"
+import CsvBarDesktop from "./csv-bar-desktop"
 import QuadroKanbanDesktop from "./quadro-kanban-desktop"
 import QuadroKanbanMobile from "./quadro-kanban-mobile"
 import { Lead } from "../data/leads"
@@ -58,6 +59,7 @@ export default function UserDashboardClient() {
       <div className="flex gap-4 mb-6">
         <AddStatusBtn onOpenModal={handleOpenStatusModal} />
         <AddLeadBtn onOpenModal={handleOpenLeadSheet} />
+        <CsvBarDesktop />
       </div>
 
       {/* Quadro Kanban responsivo */}
