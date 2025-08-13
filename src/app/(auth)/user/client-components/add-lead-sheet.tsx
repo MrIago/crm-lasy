@@ -23,7 +23,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Plus, Trash2 } from "lucide-react"
 import { toast } from "sonner"
 import { getAllStatus, Status } from "../data/status"
-import { createLead, CreateLeadData } from "../data/leads"
+import { createLead, updateLead, CreateLeadData, Lead } from "../data/leads"
 
 interface InteractionHistory {
   id: string
@@ -44,12 +44,15 @@ interface LeadFormData {
 interface AddLeadSheetProps {
   isOpen: boolean
   onClose: () => void
+  editLead?: Lead | null
 }
 
-export default function AddLeadSheet({ isOpen, onClose }: AddLeadSheetProps) {
+export default function AddLeadSheet({ isOpen, onClose, editLead }: AddLeadSheetProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [statusList, setStatusList] = useState<Status[]>([])
   const [loadingStatus, setLoadingStatus] = useState(false)
+  
+  const isEditing = Boolean(editLead)
   
   const [formData, setFormData] = useState<LeadFormData>({
     name: "",
@@ -90,6 +93,36 @@ export default function AddLeadSheet({ isOpen, onClose }: AddLeadSheetProps) {
     }
   }, [isOpen, loadStatus])
 
+  // Effect para preencher dados na edição
+  useEffect(() => {
+    if (editLead && isOpen) {
+      setFormData({
+        name: editLead.name,
+        email: editLead.email,
+        phone: editLead.phone,
+        company: editLead.company,
+        observations: editLead.observations,
+        statusId: editLead.statusId,
+        interactions: editLead.interactions.map((interaction, index) => ({
+          id: `${index}-${Date.now()}`,
+          date: interaction.date,
+          notes: interaction.notes
+        }))
+      })
+    } else if (!editLead && isOpen) {
+      // Reset form for new lead
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        company: "",
+        observations: "",
+        statusId: "",
+        interactions: []
+      })
+    }
+  }, [editLead, isOpen])
+
   // Máscara para telefone brasileiro
   const formatPhone = (value: string) => {
     const numbers = value.replace(/\D/g, '')
@@ -129,7 +162,8 @@ export default function AddLeadSheet({ isOpen, onClose }: AddLeadSheetProps) {
       newErrors.phone = "Telefone deve ter 11 dígitos e começar com 9"
     }
 
-    if (!formData.statusId) {
+    // Status só é obrigatório em modo de criação
+    if (!isEditing && !formData.statusId) {
       newErrors.statusId = "Status é obrigatório"
     }
 
@@ -187,28 +221,49 @@ export default function AddLeadSheet({ isOpen, onClose }: AddLeadSheetProps) {
     setIsLoading(true)
     
     try {
-      // Prepara os dados do lead
-      const leadData: CreateLeadData = {
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        company: formData.company,
-        observations: formData.observations,
-        statusId: formData.statusId,
-        interactions: formData.interactions
-      }
+      if (isEditing && editLead) {
+        // Modo edição
+        const updateData: Partial<CreateLeadData> = {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          company: formData.company,
+          observations: formData.observations,
+          interactions: formData.interactions
+        }
 
-      const result = await createLead(leadData)
+        const result = await updateLead(editLead.statusId, editLead.id, updateData)
 
-      if (result.success) {
-        toast.success("Lead criado com sucesso!")
-        handleCancel()
+        if (result.success) {
+          toast.success("Lead atualizado com sucesso!")
+          handleCancel()
+        } else {
+          toast.error(result.error || "Erro ao atualizar lead")
+        }
       } else {
-        toast.error(result.error || "Erro ao criar lead")
+        // Modo criação
+        const leadData: CreateLeadData = {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          company: formData.company,
+          observations: formData.observations,
+          statusId: formData.statusId,
+          interactions: formData.interactions
+        }
+
+        const result = await createLead(leadData)
+
+        if (result.success) {
+          toast.success("Lead criado com sucesso!")
+          handleCancel()
+        } else {
+          toast.error(result.error || "Erro ao criar lead")
+        }
       }
     } catch (error) {
-      console.error("Erro ao criar lead:", error)
-      toast.error("Erro inesperado ao criar lead")
+      console.error("Erro ao processar lead:", error)
+      toast.error(`Erro inesperado ao ${isEditing ? 'atualizar' : 'criar'} lead`)
     } finally {
       setIsLoading(false)
     }
@@ -235,9 +290,14 @@ export default function AddLeadSheet({ isOpen, onClose }: AddLeadSheetProps) {
         className="w-full sm:max-w-lg flex flex-col p-0"
       >
         <SheetHeader className="px-6 py-6 border-b shrink-0">
-          <SheetTitle className="text-xl">Novo Lead</SheetTitle>
+          <SheetTitle className="text-xl">
+            {isEditing ? "Editar Lead" : "Novo Lead"}
+          </SheetTitle>
           <SheetDescription>
-            Adicione um novo lead ao seu pipeline.
+            {isEditing 
+              ? "Edite as informações do lead." 
+              : "Adicione um novo lead ao seu pipeline."
+            }
           </SheetDescription>
         </SheetHeader>
 
@@ -310,6 +370,7 @@ export default function AddLeadSheet({ isOpen, onClose }: AddLeadSheetProps) {
                   <Select
                     value={formData.statusId}
                     onValueChange={(value) => handleInputChange('statusId', value)}
+                    disabled={isEditing}
                   >
                     <SelectTrigger className={errors.statusId ? "border-destructive" : ""}>
                       <SelectValue placeholder="Selecione um status" />
@@ -331,6 +392,11 @@ export default function AddLeadSheet({ isOpen, onClose }: AddLeadSheetProps) {
                 )}
                 {errors.statusId && (
                   <p className="text-sm text-destructive">{errors.statusId}</p>
+                )}
+                {isEditing && (
+                  <p className="text-sm text-muted-foreground">
+                    O status não pode ser alterado durante a edição. Use o quadro Kanban para mover o lead.
+                  </p>
                 )}
               </div>
 
@@ -410,7 +476,10 @@ export default function AddLeadSheet({ isOpen, onClose }: AddLeadSheetProps) {
               disabled={isLoading}
               className="w-full"
             >
-              {isLoading ? "Criando..." : "Criar Lead"}
+              {isLoading 
+                ? (isEditing ? "Salvando..." : "Criando...") 
+                : (isEditing ? "Salvar Alterações" : "Criar Lead")
+              }
             </Button>
             <Button
               variant="outline"

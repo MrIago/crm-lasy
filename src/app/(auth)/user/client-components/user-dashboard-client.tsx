@@ -8,10 +8,12 @@ import AddLeadBtn from "./add-lead-btn"
 import AddLeadSheet from "./add-lead-sheet"
 import QuadroKanbanDesktop from "./quadro-kanban-desktop"
 import QuadroKanbanMobile from "./quadro-kanban-mobile"
+import { Lead } from "../data/leads"
 
 export default function UserDashboardClient() {
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false)
   const [isLeadSheetOpen, setIsLeadSheetOpen] = useState(false)
+  const [editingLead, setEditingLead] = useState<Lead | null>(null)
   const isMobile = useIsMobile()
 
   const handleOpenStatusModal = () => {
@@ -23,11 +25,18 @@ export default function UserDashboardClient() {
   }
 
   const handleOpenLeadSheet = () => {
+    setEditingLead(null) // Limpa qualquer lead em edição
+    setIsLeadSheetOpen(true)
+  }
+
+  const handleEditLead = (lead: Lead) => {
+    setEditingLead(lead)
     setIsLeadSheetOpen(true)
   }
 
   const handleCloseLeadSheet = () => {
     setIsLeadSheetOpen(false)
+    setEditingLead(null) // Limpa o lead em edição ao fechar
   }
 
   return (
@@ -41,15 +50,25 @@ export default function UserDashboardClient() {
       {/* Quadro Kanban responsivo */}
       <div className="flex-1 h-full">
         {isMobile ? (
-          <QuadroKanbanMobile onAddLead={handleOpenLeadSheet} />
+          <QuadroKanbanMobile 
+            onAddLead={handleOpenLeadSheet}
+            onEditLead={handleEditLead}
+          />
         ) : (
-          <QuadroKanbanDesktop onAddLead={handleOpenLeadSheet} />
+          <QuadroKanbanDesktop 
+            onAddLead={handleOpenLeadSheet}
+            onEditLead={handleEditLead}
+          />
         )}
       </div>
 
       {/* Modais */}
       <AddStatusModal isOpen={isStatusModalOpen} onClose={handleCloseStatusModal} />
-      <AddLeadSheet isOpen={isLeadSheetOpen} onClose={handleCloseLeadSheet} />
+      <AddLeadSheet 
+        isOpen={isLeadSheetOpen} 
+        onClose={handleCloseLeadSheet}
+        editLead={editingLead}
+      />
     </>
   )
 }

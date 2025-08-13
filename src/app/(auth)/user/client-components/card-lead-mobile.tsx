@@ -9,7 +9,7 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu"
-import { MoreVertical, Mail, Phone, Building, Trash2 } from "lucide-react"
+import { MoreVertical, Mail, Phone, Building, Trash2, Edit } from "lucide-react"
 import { Lead } from "../data/leads"
 import { Status } from "../data/status"
 
@@ -18,13 +18,15 @@ interface CardLeadMobileProps {
   allStatus: Status[]
   onMoveToStatus: (leadId: string, newStatusId: string) => void
   onDeleteLead: (leadId: string, statusId: string) => void
+  onEditLead?: (lead: Lead) => void
 }
 
 export default function CardLeadMobile({ 
   lead, 
   allStatus, 
   onMoveToStatus,
-  onDeleteLead
+  onDeleteLead,
+  onEditLead
 }: CardLeadMobileProps) {
   const truncateText = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text
@@ -55,45 +57,61 @@ export default function CardLeadMobile({
             {lead.name}
           </h3>
           
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+          <div className="flex items-center gap-1 flex-shrink-0">
+            {onEditLead && (
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 w-8 p-0 hover:bg-muted/50 flex-shrink-0"
-                onClick={(e) => e.stopPropagation()}
+                className="h-8 w-8 p-0 hover:bg-muted/50"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onEditLead(lead)
+                }}
+                title="Editar lead"
               >
-                <MoreVertical className="h-4 w-4" />
+                <Edit className="h-4 w-4" />
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-52">
-              <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
-                Mover para:
-              </div>
-              {availableStatus.map((status) => (
-                <DropdownMenuItem
-                  key={status.id}
-                  onClick={() => onMoveToStatus(lead.id, status.id)}
-                  className="cursor-pointer"
+            )}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0 hover:bg-muted/50"
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  <Badge 
-                    variant="outline"
-                    className={`text-xs mr-2 ${getStatusColor(status.color)}`}
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-52">
+                <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
+                  Mover para:
+                </div>
+                {availableStatus.map((status) => (
+                  <DropdownMenuItem
+                    key={status.id}
+                    onClick={() => onMoveToStatus(lead.id, status.id)}
+                    className="cursor-pointer"
                   >
-                    {status.title}
-                  </Badge>
+                    <Badge 
+                      variant="outline"
+                      className={`text-xs mr-2 ${getStatusColor(status.color)}`}
+                    >
+                      {status.title}
+                    </Badge>
+                  </DropdownMenuItem>
+                ))}
+                <div className="border-t my-1" />
+                <DropdownMenuItem
+                  onClick={() => onDeleteLead(lead.id, lead.statusId)}
+                  className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Deletar lead
                 </DropdownMenuItem>
-              ))}
-              <div className="border-t my-1" />
-              <DropdownMenuItem
-                onClick={() => onDeleteLead(lead.id, lead.statusId)}
-                className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Deletar lead
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
 
         {/* Status atual */}

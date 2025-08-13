@@ -27,6 +27,7 @@ import CardLeadDesktop from "./card-lead-desktop"
 
 interface QuadroKanbanDesktopProps {
   onAddLead?: () => void
+  onEditLead?: (lead: Lead) => void
 }
 
 interface ColumnData {
@@ -57,7 +58,7 @@ function DroppableColumn({
   )
 }
 
-export default function QuadroKanbanDesktop({ onAddLead }: QuadroKanbanDesktopProps) {
+export default function QuadroKanbanDesktop({ onAddLead, onEditLead }: QuadroKanbanDesktopProps) {
   const [columns, setColumns] = useState<Record<string, ColumnData>>({})
   const [allStatus, setAllStatus] = useState<Status[]>([])
   const [isLoadingStatus, setIsLoadingStatus] = useState(true)
@@ -447,6 +448,7 @@ export default function QuadroKanbanDesktop({ onAddLead }: QuadroKanbanDesktopPr
                               allStatus={allStatus}
                               onMoveToStatus={handleMoveToStatus}
                               onDeleteLead={handleDeleteLead}
+                              onEditLead={onEditLead}
                             />
                           ))
                         )}
@@ -467,6 +469,7 @@ export default function QuadroKanbanDesktop({ onAddLead }: QuadroKanbanDesktopPr
               allStatus={allStatus}
               onMoveToStatus={() => {}}
               onDeleteLead={() => {}}
+              onEditLead={onEditLead}
             />
           ) : null}
         </DragOverlay>
