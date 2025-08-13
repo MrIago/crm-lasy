@@ -11,25 +11,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Plus, ChevronLeft, ChevronRight } from "lucide-react"
-import {
-  DndContext,
-  DragEndEvent,
-  DragOverlay,
-  DragStartEvent,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  closestCorners,
-} from "@dnd-kit/core"
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable"
+import { Plus, ChevronLeft, ChevronRight, ArrowUpDown } from "lucide-react"
 import { toast } from "sonner"
 import { getAllStatus, Status } from "../data/status"
-import { getLeadsByStatus, Lead, moveLeadToStatus, reorderLead } from "../data/leads"
+import { getLeadsByStatus, Lead, moveLeadToStatus } from "../data/leads"
 import CardLeadMobile from "./card-lead-mobile"
+import MoveItensMobile from "./move-itens-mobile"
 
 interface QuadroKanbanMobileProps {
   onAddLead?: () => void
@@ -41,18 +28,7 @@ export default function QuadroKanbanMobile({ onAddLead }: QuadroKanbanMobileProp
   const [leads, setLeads] = useState<Lead[]>([])
   const [isLoadingStatus, setIsLoadingStatus] = useState(true)
   const [isLoadingLeads, setIsLoadingLeads] = useState(false)
-  const [activeId, setActiveId] = useState<string | null>(null)
-  const [activeLead, setActiveLead] = useState<Lead | null>(null)
-
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-        delay: 100,
-        tolerance: 5,
-      },
-    })
-  )
+  const [isReorderMode, setIsReorderMode] = useState(false)
 
   const getStatusColor = (color: string) => {
     const colorMap: Record<string, string> = {
@@ -163,53 +139,22 @@ export default function QuadroKanbanMobile({ onAddLead }: QuadroKanbanMobileProp
     }
   }
 
-  // Manipula início do drag
-  const handleDragStart = (event: DragStartEvent) => {
-    setActiveId(event.active.id as string)
-    
-    const lead = leads.find(lead => lead.id === event.active.id)
-    setActiveLead(lead || null)
+  // Handlers do modo de reordenação
+  const handleEnterReorderMode = () => {
+    if (leads.length <= 1) {
+      toast.info("É necessário ter pelo menos 2 leads para reordenar")
+      return
+    }
+    setIsReorderMode(true)
   }
 
-  // Manipula fim do drag (apenas reordenação no mobile)
-  const handleDragEnd = async (event: DragEndEvent) => {
-    const { active, over } = event
-    setActiveId(null)
-    setActiveLead(null)
+  const handleExitReorderMode = () => {
+    setIsReorderMode(false)
+  }
 
-    if (!over) return
-
-    const activeId = active.id as string
-    const overId = over.id as string
-
-    if (activeId === overId) return
-
-    // Reordenação dentro do mesmo status
-    const activeIndex = leads.findIndex(lead => lead.id === activeId)
-    const overIndex = leads.findIndex(lead => lead.id === overId)
-
-    if (activeIndex === -1 || overIndex === -1) return
-
-    try {
-      const result = await reorderLead(selectedStatusId, activeId, overIndex)
-      if (result.success) {
-        // Reordena localmente para feedback imediato
-        const newLeads = [...leads]
-        const [movedLead] = newLeads.splice(activeIndex, 1)
-        newLeads.splice(overIndex, 0, movedLead)
-        setLeads(newLeads)
-        
-        toast.success("Lead reordenado com sucesso!")
-      } else {
-        toast.error(result.error || "Erro ao reordenar lead")
-        // Recarrega em caso de erro para sincronizar
-        await loadLeads(selectedStatusId)
-      }
-    } catch (error) {
-      toast.error("Erro ao reordenar lead")
-      // Recarrega em caso de erro para sincronizar
-      await loadLeads(selectedStatusId)
-    }
+  const handleLeadsReordered = (newLeads: Lead[]) => {
+    setLeads(newLeads)
+    setIsReorderMode(false)
   }
 
   const currentStatus = allStatus.find(s => s.id === selectedStatusId)
@@ -293,6 +238,18 @@ export default function QuadroKanbanMobile({ onAddLead }: QuadroKanbanMobileProp
           <ChevronRight className="h-4 w-4" />
         </Button>
 
+        {/* Botão de reordenar */}
+        {leads.length > 1 && !isReorderMode && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleEnterReorderMode}
+            className="h-8 w-8 p-0"
+          >
+            <ArrowUpDown className="h-4 w-4" />
+          </Button>
+        )}
+
         {onAddLead && (
           <Button
             variant="default"
@@ -305,66 +262,52 @@ export default function QuadroKanbanMobile({ onAddLead }: QuadroKanbanMobileProp
         )}
       </div>
 
-      {/* Lista de leads */}
+      {/* Lista de leads ou modo de reordenação */}
       <div className="flex-1">
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCorners}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
-        >
+        {isReorderMode ? (
+          <MoveItensMobile
+            leads={leads}
+            statusId={selectedStatusId}
+            onLeadsReordered={handleLeadsReordered}
+            onCancel={handleExitReorderMode}
+          />
+        ) : (
           <ScrollArea className="h-[calc(100vh-12rem)]">
-            <SortableContext 
-              items={leads.map(lead => lead.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              <div className="space-y-3 pr-2">
-                {isLoadingLeads ? (
-                  <div className="text-sm text-muted-foreground text-center py-8">
-                    Carregando leads...
+            <div className="space-y-3 pr-2">
+              {isLoadingLeads ? (
+                <div className="text-sm text-muted-foreground text-center py-8">
+                  Carregando leads...
+                </div>
+              ) : leads.length === 0 ? (
+                <div className="text-sm text-muted-foreground text-center py-12 border-2 border-dashed border-muted-foreground/25 rounded-lg">
+                  <div className="space-y-2">
+                    <div>Nenhum lead neste status</div>
+                    {onAddLead && (
+                      <Button
+                        variant="ghost" 
+                        size="sm"
+                        onClick={onAddLead}
+                        className="mt-2"
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Adicionar primeiro lead
+                      </Button>
+                    )}
                   </div>
-                ) : leads.length === 0 ? (
-                  <div className="text-sm text-muted-foreground text-center py-12 border-2 border-dashed border-muted-foreground/25 rounded-lg">
-                    <div className="space-y-2">
-                      <div>Nenhum lead neste status</div>
-                      {onAddLead && (
-                        <Button
-                          variant="ghost" 
-                          size="sm"
-                          onClick={onAddLead}
-                          className="mt-2"
-                        >
-                          <Plus className="h-4 w-4 mr-2" />
-                          Adicionar primeiro lead
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                ) : (
-                  leads.map((lead) => (
-                    <CardLeadMobile
-                      key={lead.id}
-                      lead={lead}
-                      allStatus={allStatus}
-                      onMoveToStatus={handleMoveToStatus}
-                    />
-                  ))
-                )}
-              </div>
-            </SortableContext>
+                </div>
+              ) : (
+                leads.map((lead) => (
+                  <CardLeadMobile
+                    key={lead.id}
+                    lead={lead}
+                    allStatus={allStatus}
+                    onMoveToStatus={handleMoveToStatus}
+                  />
+                ))
+              )}
+            </div>
           </ScrollArea>
-
-          {/* Drag overlay */}
-          <DragOverlay>
-            {activeLead ? (
-              <CardLeadMobile
-                lead={activeLead}
-                allStatus={allStatus}
-                onMoveToStatus={() => {}}
-              />
-            ) : null}
-          </DragOverlay>
-        </DndContext>
+        )}
       </div>
     </div>
   )

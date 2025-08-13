@@ -9,12 +9,9 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu"
-import { MoreVertical, Mail, Phone, Building, GripVertical } from "lucide-react"
+import { MoreVertical, Mail, Phone, Building } from "lucide-react"
 import { Lead } from "../data/leads"
 import { Status } from "../data/status"
-import { useSortable } from "@dnd-kit/sortable"
-import { CSS } from "@dnd-kit/utilities"
-import { useState } from "react"
 
 interface CardLeadMobileProps {
   lead: Lead
@@ -27,22 +24,6 @@ export default function CardLeadMobile({
   allStatus, 
   onMoveToStatus 
 }: CardLeadMobileProps) {
-  const [isDragging, setIsDragging] = useState(false)
-  
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging: isKitDragging,
-  } = useSortable({ id: lead.id })
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  }
-
   const truncateText = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text
     return text.substring(0, maxLength) + "..."
@@ -63,43 +44,14 @@ export default function CardLeadMobile({
     return colorMap[color] || colorMap.gray
   }
 
-  // Handlers para touch/hold
-  const handleTouchStart = () => {
-    // Delay para ativar o drag no mobile
-    setTimeout(() => {
-      setIsDragging(true)
-    }, 500) // 500ms hold para ativar DnD
-  }
-
-  const handleTouchEnd = () => {
-    setIsDragging(false)
-  }
-
   return (
-    <Card
-      ref={setNodeRef}
-      style={style}
-      className={`transition-all duration-200 hover:shadow-md ${
-        isKitDragging || isDragging ? "opacity-50 scale-105 shadow-xl" : ""
-      } ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-    >
+    <Card className="transition-all duration-200 hover:shadow-md">
       <CardContent className="p-4 space-y-3">
-        {/* Header com nome, drag handle e ações */}
+        {/* Header com nome e ações */}
         <div className="flex items-start justify-between gap-2">
-          <div className="flex items-start gap-2 flex-1 min-w-0">
-            <div 
-              {...attributes}
-              {...listeners}
-              className="mt-1 cursor-grab active:cursor-grabbing touch-manipulation"
-            >
-              <GripVertical className="h-4 w-4 text-muted-foreground" />
-            </div>
-            <h3 className="font-semibold text-sm leading-tight line-clamp-2 flex-1">
-              {lead.name}
-            </h3>
-          </div>
+          <h3 className="font-semibold text-sm leading-tight line-clamp-2 flex-1">
+            {lead.name}
+          </h3>
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

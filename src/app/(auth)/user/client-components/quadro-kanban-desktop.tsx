@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button"
 import {
   DndContext,
   DragEndEvent,
-  DragOverEvent,
   DragOverlay,
   DragStartEvent,
   PointerSensor,
