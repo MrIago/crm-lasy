@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
-import { Plus } from "lucide-react"
+import { Plus, ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DndContext,
@@ -21,7 +21,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable"
 import { toast } from "sonner"
-import { getAllStatus, Status } from "../data/status"
+import { getAllStatus, Status, reorderStatus } from "../data/status"
 import { getLeadsByStatus, Lead, moveLeadToStatus, reorderLead } from "../data/leads"
 import CardLeadDesktop from "./card-lead-desktop"
 
@@ -187,6 +187,33 @@ export default function QuadroKanbanDesktop({ onAddLead }: QuadroKanbanDesktopPr
     }
   }
 
+  // Manipula reordenação de status
+  const handleReorderStatus = async (statusId: string, direction: 'left' | 'right') => {
+    const currentIndex = allStatus.findIndex(s => s.id === statusId)
+    if (currentIndex === -1) return
+
+    let newPosition: number
+    if (direction === 'left') {
+      if (currentIndex === 0) return // Já está na primeira posição
+      newPosition = currentIndex - 1
+    } else {
+      if (currentIndex === allStatus.length - 1) return // Já está na última posição
+      newPosition = currentIndex + 1
+    }
+
+    try {
+      const result = await reorderStatus(statusId, newPosition)
+      if (result.success) {
+        await loadStatus() // Recarrega todos os status para atualizar a ordem
+        toast.success("Status reordenado com sucesso!")
+      } else {
+        toast.error(result.error || "Erro ao reordenar status")
+      }
+    } catch {
+      toast.error("Erro ao reordenar status")
+    }
+  }
+
   // Manipula início do drag
   const handleDragStart = (event: DragStartEvent) => {
     const lead = Object.values(columns)
@@ -305,7 +332,7 @@ export default function QuadroKanbanDesktop({ onAddLead }: QuadroKanbanDesktopPr
         onDragEnd={handleDragEnd}
       >
         <div className="flex gap-6 h-full overflow-x-auto pb-4">
-          {allStatus.map((status) => {
+          {allStatus.map((status, index) => {
             const column = columns[status.id]
             if (!column) return null
 
@@ -317,12 +344,37 @@ export default function QuadroKanbanDesktop({ onAddLead }: QuadroKanbanDesktopPr
                 {/* Header da coluna */}
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
-                    <Badge 
-                      variant="outline"
-                      className={`${getStatusColor(status.color)} font-medium`}
-                    >
-                      {status.title}
-                    </Badge>
+                    <div className="flex items-center">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleReorderStatus(status.id, 'left')}
+                        disabled={index === 0}
+                        className="h-6 w-6 p-0 mr-1"
+                        title="Mover para esquerda"
+                      >
+                        <ChevronLeft className="h-3 w-3" />
+                      </Button>
+                      
+                      <Badge 
+                        variant="outline"
+                        className={`${getStatusColor(status.color)} font-medium`}
+                      >
+                        {status.title}
+                      </Badge>
+                      
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleReorderStatus(status.id, 'right')}
+                        disabled={index === allStatus.length - 1}
+                        className="h-6 w-6 p-0 ml-1"
+                        title="Mover para direita"
+                      >
+                        <ChevronRight className="h-3 w-3" />
+                      </Button>
+                    </div>
+                    
                     <Badge variant="secondary" className="text-xs">
                       {column.leads.length}
                     </Badge>
