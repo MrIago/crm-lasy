@@ -9,7 +9,7 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu"
-import { MoreVertical, Mail, Phone, Building } from "lucide-react"
+import { MoreVertical, Mail, Phone, Building, Trash2 } from "lucide-react"
 import { Lead } from "../data/leads"
 import { Status } from "../data/status"
 
@@ -17,12 +17,14 @@ interface CardLeadMobileProps {
   lead: Lead
   allStatus: Status[]
   onMoveToStatus: (leadId: string, newStatusId: string) => void
+  onDeleteLead: (leadId: string, statusId: string) => void
 }
 
 export default function CardLeadMobile({ 
   lead, 
   allStatus, 
-  onMoveToStatus 
+  onMoveToStatus,
+  onDeleteLead
 }: CardLeadMobileProps) {
   const truncateText = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text
@@ -82,6 +84,14 @@ export default function CardLeadMobile({
                   </Badge>
                 </DropdownMenuItem>
               ))}
+              <div className="border-t my-1" />
+              <DropdownMenuItem
+                onClick={() => onDeleteLead(lead.id, lead.statusId)}
+                className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Deletar lead
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

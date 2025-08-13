@@ -14,7 +14,7 @@ import {
 import { Plus, ChevronLeft, ChevronRight, ArrowUpDown } from "lucide-react"
 import { toast } from "sonner"
 import { getAllStatus, Status } from "../data/status"
-import { getLeadsByStatus, Lead, moveLeadToStatus } from "../data/leads"
+import { getLeadsByStatus, Lead, moveLeadToStatus, deleteLead } from "../data/leads"
 import CardLeadMobile from "./card-lead-mobile"
 import MoveItensMobile from "./move-itens-mobile"
 
@@ -148,6 +148,25 @@ export default function QuadroKanbanMobile({ onAddLead }: QuadroKanbanMobileProp
       }
     } catch {
       toast.error("Erro ao mover lead")
+    }
+  }
+
+  // Manipula exclusão de lead
+  const handleDeleteLead = async (leadId: string, statusId: string) => {
+    if (!confirm("Tem certeza que deseja deletar este lead? Esta ação não pode ser desfeita.")) {
+      return
+    }
+
+    try {
+      const result = await deleteLead(statusId, leadId)
+      if (result.success) {
+        setLeads(prev => prev.filter(lead => lead.id !== leadId))
+        toast.success("Lead deletado com sucesso!")
+      } else {
+        toast.error(result.error || "Erro ao deletar lead")
+      }
+    } catch {
+      toast.error("Erro ao deletar lead")
     }
   }
 
@@ -314,6 +333,7 @@ export default function QuadroKanbanMobile({ onAddLead }: QuadroKanbanMobileProp
                     lead={lead}
                     allStatus={allStatus}
                     onMoveToStatus={handleMoveToStatus}
+                    onDeleteLead={handleDeleteLead}
                   />
                 ))
               )}

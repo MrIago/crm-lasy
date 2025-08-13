@@ -9,7 +9,7 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu"
-import { MoreVertical, Mail, Phone, Building } from "lucide-react"
+import { MoreVertical, Mail, Phone, Building, Trash2 } from "lucide-react"
 import { Lead } from "../data/leads"
 import { Status } from "../data/status"
 import { useSortable } from "@dnd-kit/sortable"
@@ -19,12 +19,14 @@ interface CardLeadDesktopProps {
   lead: Lead
   allStatus: Status[]
   onMoveToStatus: (leadId: string, newStatusId: string) => void
+  onDeleteLead: (leadId: string, statusId: string) => void
 }
 
 export default function CardLeadDesktop({ 
   lead, 
   allStatus, 
-  onMoveToStatus 
+  onMoveToStatus,
+  onDeleteLead
 }: CardLeadDesktopProps) {
   const {
     attributes,
@@ -105,6 +107,14 @@ export default function CardLeadDesktop({
                   </Badge>
                 </DropdownMenuItem>
               ))}
+              <div className="border-t my-1" />
+              <DropdownMenuItem
+                onClick={() => onDeleteLead(lead.id, lead.statusId)}
+                className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
+              >
+                <Trash2 className="h-3 w-3 mr-2" />
+                Deletar lead
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

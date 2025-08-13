@@ -22,7 +22,7 @@ import {
 } from "@dnd-kit/sortable"
 import { toast } from "sonner"
 import { getAllStatus, Status, reorderStatus } from "../data/status"
-import { getLeadsByStatus, Lead, moveLeadToStatus, reorderLead } from "../data/leads"
+import { getLeadsByStatus, Lead, moveLeadToStatus, reorderLead, deleteLead } from "../data/leads"
 import CardLeadDesktop from "./card-lead-desktop"
 
 interface QuadroKanbanDesktopProps {
@@ -196,6 +196,25 @@ export default function QuadroKanbanDesktop({ onAddLead }: QuadroKanbanDesktopPr
       }
     } catch {
       toast.error("Erro ao mover lead")
+    }
+  }
+
+  // Manipula exclusão de lead
+  const handleDeleteLead = async (leadId: string, statusId: string) => {
+    if (!confirm("Tem certeza que deseja deletar este lead? Esta ação não pode ser desfeita.")) {
+      return
+    }
+
+    try {
+      const result = await deleteLead(statusId, leadId)
+      if (result.success) {
+        await loadLeadsForStatus(statusId)
+        toast.success("Lead deletado com sucesso!")
+      } else {
+        toast.error(result.error || "Erro ao deletar lead")
+      }
+    } catch {
+      toast.error("Erro ao deletar lead")
     }
   }
 
@@ -427,6 +446,7 @@ export default function QuadroKanbanDesktop({ onAddLead }: QuadroKanbanDesktopPr
                               lead={lead}
                               allStatus={allStatus}
                               onMoveToStatus={handleMoveToStatus}
+                              onDeleteLead={handleDeleteLead}
                             />
                           ))
                         )}
@@ -446,6 +466,7 @@ export default function QuadroKanbanDesktop({ onAddLead }: QuadroKanbanDesktopPr
               lead={activeLead}
               allStatus={allStatus}
               onMoveToStatus={() => {}}
+              onDeleteLead={() => {}}
             />
           ) : null}
         </DragOverlay>
