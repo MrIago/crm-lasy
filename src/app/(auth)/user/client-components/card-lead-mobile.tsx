@@ -9,7 +9,7 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu"
-import { MoreVertical, Mail, Phone, Building, Trash2, Edit } from "lucide-react"
+import { MoreVertical, Mail, Phone, Building, Trash2, Edit, Eye } from "lucide-react"
 import { Lead } from "../data/leads"
 import { Status } from "../data/status"
 
@@ -19,6 +19,7 @@ interface CardLeadMobileProps {
   onMoveToStatus: (leadId: string, newStatusId: string) => void
   onDeleteLead: (leadId: string, statusId: string) => void
   onEditLead?: (lead: Lead) => void
+  onViewLead?: (lead: Lead) => void
 }
 
 export default function CardLeadMobile({ 
@@ -26,7 +27,8 @@ export default function CardLeadMobile({
   allStatus, 
   onMoveToStatus,
   onDeleteLead,
-  onEditLead
+  onEditLead,
+  onViewLead
 }: CardLeadMobileProps) {
   const truncateText = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text
@@ -58,6 +60,20 @@ export default function CardLeadMobile({
           </h3>
           
           <div className="flex items-center gap-1 flex-shrink-0">
+            {onViewLead && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 p-0 hover:bg-muted/50"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onViewLead(lead)
+                }}
+                title="Visualizar lead"
+              >
+                <Eye className="h-4 w-4" />
+              </Button>
+            )}
             {onEditLead && (
               <Button
                 variant="ghost"

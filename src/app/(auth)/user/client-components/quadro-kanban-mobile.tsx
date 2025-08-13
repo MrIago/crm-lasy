@@ -21,9 +21,10 @@ import MoveItensMobile from "./move-itens-mobile"
 interface QuadroKanbanMobileProps {
   onAddLead?: () => void
   onEditLead?: (lead: Lead) => void
+  onViewLead?: (lead: Lead) => void
 }
 
-export default function QuadroKanbanMobile({ onAddLead, onEditLead }: QuadroKanbanMobileProps) {
+export default function QuadroKanbanMobile({ onAddLead, onEditLead, onViewLead }: QuadroKanbanMobileProps) {
   const [allStatus, setAllStatus] = useState<Status[]>([])
   const [selectedStatusId, setSelectedStatusId] = useState<string>("")
   const [leads, setLeads] = useState<Lead[]>([])
@@ -336,6 +337,7 @@ export default function QuadroKanbanMobile({ onAddLead, onEditLead }: QuadroKanb
                     onMoveToStatus={handleMoveToStatus}
                     onDeleteLead={handleDeleteLead}
                     onEditLead={onEditLead}
+                    onViewLead={onViewLead}
                   />
                 ))
               )}

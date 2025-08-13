@@ -9,7 +9,7 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu"
-import { MoreVertical, Mail, Phone, Building, Trash2, Edit } from "lucide-react"
+import { MoreVertical, Mail, Phone, Building, Trash2, Edit, Eye } from "lucide-react"
 import { Lead } from "../data/leads"
 import { Status } from "../data/status"
 import { useSortable } from "@dnd-kit/sortable"
@@ -21,6 +21,7 @@ interface CardLeadDesktopProps {
   onMoveToStatus: (leadId: string, newStatusId: string) => void
   onDeleteLead: (leadId: string, statusId: string) => void
   onEditLead?: (lead: Lead) => void
+  onViewLead?: (lead: Lead) => void
 }
 
 export default function CardLeadDesktop({ 
@@ -28,7 +29,8 @@ export default function CardLeadDesktop({
   allStatus, 
   onMoveToStatus,
   onDeleteLead,
-  onEditLead
+  onEditLead,
+  onViewLead
 }: CardLeadDesktopProps) {
   const {
     attributes,
@@ -81,6 +83,20 @@ export default function CardLeadDesktop({
             {lead.name}
           </h3>
           <div className="flex items-center gap-1">
+            {onViewLead && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 w-6 p-0 hover:bg-muted/50"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onViewLead(lead)
+                }}
+                title="Visualizar lead"
+              >
+                <Eye className="h-3 w-3" />
+              </Button>
+            )}
             {onEditLead && (
               <Button
                 variant="ghost"
