@@ -69,17 +69,22 @@ export default function QuadroKanbanMobile({ onAddLead, onEditLead, onViewLead, 
       
       setAllStatus(result.status)
       
-      // Seleciona o primeiro status por padrão
-      if (result.status.length > 0 && !selectedStatusId) {
-        setSelectedStatusId(result.status[0].id)
-      }
+      // Seleciona o primeiro status por padrão se não houver nenhum selecionado
+      // ou se o status selecionado não existe mais
+      setSelectedStatusId(current => {
+        const currentStatusExists = result.status.some(s => s.id === current)
+        if (result.status.length > 0 && (!current || !currentStatusExists)) {
+          return result.status[0].id
+        }
+        return current
+      })
       
     } catch {
       toast.error("Erro ao carregar status")
     } finally {
       setIsLoadingStatus(false)
     }
-  }, [selectedStatusId])
+  }, [])
 
   // Carrega leads do status selecionado
   const loadLeads = useCallback(async (statusId: string) => {
@@ -188,7 +193,14 @@ export default function QuadroKanbanMobile({ onAddLead, onEditLead, onViewLead, 
     try {
       const result = await deleteStatus(statusId)
       if (result.success) {
-        await loadStatus() // Recarrega todos os status
+        // Se o status deletado era o selecionado, limpa a seleção
+        if (statusId === selectedStatusId) {
+          setSelectedStatusId("")
+          setLeads([])
+        }
+        
+        // Recarrega todos os status
+        await loadStatus()
         toast.success("Status deletado com sucesso!")
       } else {
         toast.error(result.error || "Erro ao deletar status")

@@ -301,7 +301,8 @@ export default function QuadroKanbanDesktop({ onAddLead, onEditLead, onViewLead,
     try {
       const result = await deleteStatus(statusId)
       if (result.success) {
-        await loadStatus() // Recarrega todos os status
+        // Recarrega todos os status (isso vai recriar as colunas e carregar os leads automaticamente)
+        await loadStatus()
         toast.success("Status deletado com sucesso!")
       } else {
         toast.error(result.error || "Erro ao deletar status")
