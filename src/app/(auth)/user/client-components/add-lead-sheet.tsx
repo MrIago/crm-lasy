@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import {
   Sheet,
   SheetContent,
@@ -63,13 +63,7 @@ export default function AddLeadSheet({ isOpen, onClose }: AddLeadSheetProps) {
   const [errors, setErrors] = useState<Partial<Record<keyof LeadFormData, string>>>({})
 
   // Carregar status disponíveis
-  useEffect(() => {
-    if (isOpen) {
-      loadStatus()
-    }
-  }, [isOpen])
-
-  const loadStatus = async () => {
+  const loadStatus = useCallback(async () => {
     setLoadingStatus(true)
     try {
       const result = await getAllStatus()
@@ -82,12 +76,18 @@ export default function AddLeadSheet({ isOpen, onClose }: AddLeadSheetProps) {
           setFormData(prev => ({ ...prev, statusId: result.status[0].id }))
         }
       }
-    } catch (error) {
+    } catch {
       toast.error("Erro ao carregar status")
     } finally {
       setLoadingStatus(false)
     }
-  }
+  }, [formData.statusId])
+
+  useEffect(() => {
+    if (isOpen) {
+      loadStatus()
+    }
+  }, [isOpen, loadStatus])
 
   // Máscara para telefone brasileiro
   const formatPhone = (value: string) => {

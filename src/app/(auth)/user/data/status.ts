@@ -2,6 +2,15 @@
 
 import { adminDb } from '@/firebase/firebase-admin'
 import { getUserData } from '@/mr-auth/actions/getUserData'
+import { normalizeTitle } from '../helpers/useNormalizeId'
+import { 
+  getNextOrderFromLast, 
+  calculateOrderBetween, 
+  ordersAreTooClose,
+  generateRebalancedOrders,
+  DEFAULT_ORDER_START,
+  DEFAULT_ORDER_INCREMENT
+} from '../helpers/useOrder'
 
 export interface Status {
   id: string
@@ -17,16 +26,6 @@ export interface CreateStatusData {
   color: string
 }
 
-// Helper para normalizar título para ID
-function normalizeTitle(title: string): string {
-  return title
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '') // Remove acentos
-    .replace(/[^a-z0-9]/g, '') // Remove caracteres especiais
-    .trim()
-}
-
 // Helper para gerar ordem eficiente
 async function getNextOrder(userId: string): Promise<number> {
   try {
@@ -40,20 +39,15 @@ async function getNextOrder(userId: string): Promise<number> {
     const snapshot = await statusRef.get()
     
     if (snapshot.empty) {
-      return 1000 // Primeira ordem
+      return DEFAULT_ORDER_START // Primeira ordem
     }
 
     const lastStatus = snapshot.docs[0].data()
-    return (lastStatus.order || 0) + 1000
+    return getNextOrderFromLast(lastStatus.order)
   } catch (error) {
     console.error('Erro ao calcular próxima ordem:', error)
-    return 1000
+    return DEFAULT_ORDER_START
   }
-}
-
-// Helper para calcular ordem entre dois itens (uso interno)
-function calculateOrderBetween(orderBefore: number, orderAfter: number): number {
-  return Math.floor((orderBefore + orderAfter) / 2)
 }
 
 export async function createStatus(data: CreateStatusData): Promise<{ success: boolean; error?: string; status?: Status }> {
@@ -263,24 +257,27 @@ export async function reorderStatus(id: string, newPosition: number): Promise<{ 
       return { success: true }
     }
 
+    // Extrai todas as ordens atuais
+    const allOrders = allStatus.map(doc => doc.data().order || DEFAULT_ORDER_START)
+    
     let newOrder: number
 
     if (newPosition === 0) {
       // Movendo para o início
-      const firstOrder = allStatus[0].data().order || 1000
-      newOrder = firstOrder - 1000
+      const firstOrder = allOrders[0] || DEFAULT_ORDER_START
+      newOrder = firstOrder - DEFAULT_ORDER_INCREMENT
     } else if (newPosition === allStatus.length - 1) {
       // Movendo para o final
-      const lastOrder = allStatus[allStatus.length - 1].data().order || 1000
-      newOrder = lastOrder + 1000
+      const lastOrder = allOrders[allOrders.length - 1] || DEFAULT_ORDER_START
+      newOrder = lastOrder + DEFAULT_ORDER_INCREMENT
     } else {
       // Movendo para o meio - calcula a ordem entre os dois vizinhos
-      const beforeOrder = allStatus[newPosition - 1].data().order || 1000
-      const afterOrder = allStatus[newPosition].data().order || 2000
+      const beforeOrder = allOrders[newPosition - 1] || DEFAULT_ORDER_START
+      const afterOrder = allOrders[newPosition] || DEFAULT_ORDER_START + DEFAULT_ORDER_INCREMENT
       newOrder = calculateOrderBetween(beforeOrder, afterOrder)
       
       // Se a diferença for muito pequena, reorganiza os números
-      if (Math.abs(afterOrder - beforeOrder) < 2) {
+      if (ordersAreTooClose(beforeOrder, afterOrder)) {
         return await rebalanceOrders(user.uid, id, newPosition)
       }
     }
@@ -318,7 +315,8 @@ async function rebalanceOrders(userId: string, targetId: string, newPosition: nu
     const allStatusSnapshot = await allStatusRef.get()
     const allStatus = allStatusSnapshot.docs
 
-    // Reordena todos os itens com espaçamento de 1000
+    // Gera ordens rebalanceadas
+    const rebalancedOrders = generateRebalancedOrders(allStatus.length)
     const batch = adminDb.batch()
     
     allStatus.forEach((doc, index) => {
@@ -329,7 +327,7 @@ async function rebalanceOrders(userId: string, targetId: string, newPosition: nu
         newIndex = index + 1 // Desloca os itens após a nova posição
       }
       
-      const newOrder = (newIndex + 1) * 1000
+      const newOrder = rebalancedOrders[newIndex]
       batch.update(doc.ref, { order: newOrder, updatedAt: new Date() })
     })
 
@@ -341,7 +339,7 @@ async function rebalanceOrders(userId: string, targetId: string, newPosition: nu
       .doc(targetId)
     
     batch.update(targetRef, { 
-      order: (newPosition + 1) * 1000, 
+      order: rebalancedOrders[newPosition], 
       updatedAt: new Date() 
     })
 
