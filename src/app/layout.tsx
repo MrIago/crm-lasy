@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/mr-theme/components/provider"
 import { MrAuth } from "@/mr-auth"
 import { Toaster } from "@/components/ui/sonner"
+import { Navbar } from "@/components/nav"
 
 const openSans = Open_Sans({
   variable: "--font-sans",
@@ -46,7 +47,10 @@ export default function RootLayout({
             disableTransitionOnChange
           >
           <MrAuth>
-            {children}
+            <div className="min-h-screen">
+              <Navbar />
+              <main className="pt-16">{children}</main>
+            </div>
           </MrAuth>
           <Toaster />
         </ThemeProvider>
