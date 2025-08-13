@@ -59,7 +59,7 @@ export default function QuadroKanbanMobile({ onAddLead }: QuadroKanbanMobileProp
         setSelectedStatusId(result.status[0].id)
       }
       
-    } catch (error) {
+    } catch {
       toast.error("Erro ao carregar status")
     } finally {
       setIsLoadingStatus(false)
@@ -79,7 +79,7 @@ export default function QuadroKanbanMobile({ onAddLead }: QuadroKanbanMobileProp
       }
 
       setLeads(result.leads)
-    } catch (error) {
+    } catch {
       toast.error("Erro ao carregar leads")
     } finally {
       setIsLoadingLeads(false)
@@ -134,7 +134,7 @@ export default function QuadroKanbanMobile({ onAddLead }: QuadroKanbanMobileProp
       } else {
         toast.error(result.error || "Erro ao mover lead")
       }
-    } catch (error) {
+    } catch {
       toast.error("Erro ao mover lead")
     }
   }

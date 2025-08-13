@@ -61,7 +61,6 @@ export default function QuadroKanbanDesktop({ onAddLead }: QuadroKanbanDesktopPr
   const [columns, setColumns] = useState<Record<string, ColumnData>>({})
   const [allStatus, setAllStatus] = useState<Status[]>([])
   const [isLoadingStatus, setIsLoadingStatus] = useState(true)
-  const [activeId, setActiveId] = useState<string | null>(null)
   const [activeLead, setActiveLead] = useState<Lead | null>(null)
 
   const sensors = useSensors(
@@ -107,7 +106,7 @@ export default function QuadroKanbanDesktop({ onAddLead }: QuadroKanbanDesktopPr
       })
       setColumns(initialColumns)
       
-    } catch (error) {
+    } catch {
       toast.error("Erro ao carregar status")
     } finally {
       setIsLoadingStatus(false)
@@ -139,7 +138,7 @@ export default function QuadroKanbanDesktop({ onAddLead }: QuadroKanbanDesktopPr
           isLoading: false
         }
       }))
-    } catch (error) {
+    } catch {
       toast.error(`Erro ao carregar leads do status`)
     }
   }, [])
@@ -183,15 +182,13 @@ export default function QuadroKanbanDesktop({ onAddLead }: QuadroKanbanDesktopPr
       } else {
         toast.error(result.error || "Erro ao mover lead")
       }
-    } catch (error) {
+    } catch {
       toast.error("Erro ao mover lead")
     }
   }
 
   // Manipula início do drag
   const handleDragStart = (event: DragStartEvent) => {
-    setActiveId(event.active.id as string)
-    
     const lead = Object.values(columns)
       .flatMap(col => col.leads)
       .find(lead => lead.id === event.active.id)
@@ -202,7 +199,6 @@ export default function QuadroKanbanDesktop({ onAddLead }: QuadroKanbanDesktopPr
   // Manipula fim do drag
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event
-    setActiveId(null)
     setActiveLead(null)
 
     if (!over) return
@@ -232,7 +228,7 @@ export default function QuadroKanbanDesktop({ onAddLead }: QuadroKanbanDesktopPr
           } else {
             toast.error(result.error || "Erro ao mover lead")
           }
-        } catch (error) {
+        } catch {
           toast.error("Erro ao mover lead")
         }
       }
@@ -261,7 +257,7 @@ export default function QuadroKanbanDesktop({ onAddLead }: QuadroKanbanDesktopPr
           } else {
             toast.error(result.error || "Erro ao reordenar lead")
           }
-        } catch (error) {
+        } catch {
           toast.error("Erro ao reordenar lead")
         }
       }
@@ -286,7 +282,7 @@ export default function QuadroKanbanDesktop({ onAddLead }: QuadroKanbanDesktopPr
         } else {
           toast.error(result.error || "Erro ao mover lead")
         }
-      } catch (error) {
+      } catch {
         toast.error("Erro ao mover lead")
       }
     }
