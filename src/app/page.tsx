@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { CheckCircle, Github, Video, ExternalLink, Users, Shield, Kanban, FileUp, Search, Download, Eye, Clock, Smartphone, Monitor, Zap } from "lucide-react"
-import { LoginBtn, useAuthStore } from "@/mr-auth"
+import { useAuthStore } from "@/mr-auth"
 import Link from "next/link"
 
 export default function Home() {
@@ -38,7 +38,9 @@ export default function Home() {
               </Link>
             </Button>
           ) : (
-            <LoginBtn />
+            <p className="text-muted-foreground">
+              Faça login para acessar o dashboard
+            </p>
           )}
         </div>
 
@@ -67,14 +69,14 @@ export default function Home() {
 
         {/* Links Section */}
         <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-          <Card className="hover:shadow-md transition-shadow">
-            <CardHeader>
+          <Card className="hover:shadow-md transition-shadow flex flex-col">
+            <CardHeader className="flex-1">
               <CardTitle className="text-lg flex items-center gap-2">
                 <Video className="h-5 w-5 text-blue-500" />
                 Desenvolvimento - Parte 1
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-0">
               <Button variant="outline" className="w-full" asChild>
                 <a href="https://www.loom.com/share/10e7493bfa0c447b87b4005a3b4e6c8a" target="_blank" rel="noopener noreferrer">
                   <ExternalLink className="mr-2 h-4 w-4" />
@@ -84,14 +86,14 @@ export default function Home() {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-md transition-shadow">
-            <CardHeader>
+          <Card className="hover:shadow-md transition-shadow flex flex-col">
+            <CardHeader className="flex-1">
               <CardTitle className="text-lg flex items-center gap-2">
                 <Video className="h-5 w-5 text-blue-500" />
                 Desenvolvimento - Parte 2
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-0">
               <Button variant="outline" className="w-full" asChild>
                 <a href="https://www.loom.com/share/10e7493bfa0c447b87b4005a3b4e6c8a" target="_blank" rel="noopener noreferrer">
                   <ExternalLink className="mr-2 h-4 w-4" />
@@ -101,14 +103,14 @@ export default function Home() {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-md transition-shadow">
-            <CardHeader>
+          <Card className="hover:shadow-md transition-shadow flex flex-col">
+            <CardHeader className="flex-1">
               <CardTitle className="text-lg flex items-center gap-2">
                 <Github className="h-5 w-5" />
                 Código Fonte
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-0">
               <Button variant="outline" className="w-full" asChild>
                 <a href="https://github.com/MrIago/crm-lasy" target="_blank" rel="noopener noreferrer">
                   <Github className="mr-2 h-4 w-4" />
