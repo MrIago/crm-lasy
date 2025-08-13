@@ -6,14 +6,13 @@ export default async function UserDashboardPage() {
   await createKanban()
 
   return (
-    <div className="min-h-screen p-4 sm:p-6 flex flex-col gap-6">
-      <header className="flex items-center justify-between flex-wrap gap-4">
-        <h1 className="text-2xl font-semibold">Dashboard do Usuário</h1>
-        <UserDashboardClient />
+    <div className="min-h-screen p-4 sm:p-6 flex flex-col">
+      <header className="flex items-center justify-between flex-wrap gap-4 mb-6">
+        <h1 className="text-2xl font-semibold">Dashboard - CRM</h1>
       </header>
 
-      <div className="text-sm text-muted-foreground">
-        Conteúdo inicial do dashboard do usuário.
+      <div className="flex-1 flex flex-col min-h-0">
+        <UserDashboardClient />
       </div>
     </div>
   )
