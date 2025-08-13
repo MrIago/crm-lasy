@@ -23,6 +23,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Plus, Trash2 } from "lucide-react"
 import { toast } from "sonner"
 import { getAllStatus, Status } from "../data/status"
+import { createLead, CreateLeadData } from "../data/leads"
 
 interface InteractionHistory {
   id: string
@@ -186,14 +187,25 @@ export default function AddLeadSheet({ isOpen, onClose }: AddLeadSheetProps) {
     setIsLoading(true)
     
     try {
-      // TODO: Implementar criação de lead
-      console.log("Criando lead:", formData)
-      
-      // Simular delay
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      toast.success("Lead criado com sucesso!")
-      handleCancel()
+      // Prepara os dados do lead
+      const leadData: CreateLeadData = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        company: formData.company,
+        observations: formData.observations,
+        statusId: formData.statusId,
+        interactions: formData.interactions
+      }
+
+      const result = await createLead(leadData)
+
+      if (result.success) {
+        toast.success("Lead criado com sucesso!")
+        handleCancel()
+      } else {
+        toast.error(result.error || "Erro ao criar lead")
+      }
     } catch (error) {
       console.error("Erro ao criar lead:", error)
       toast.error("Erro inesperado ao criar lead")

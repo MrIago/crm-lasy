@@ -57,13 +57,16 @@ observações (truncar em 100 caracteres)
 [x] Tema configurado
 [x] Navbar configurada
 [x] Botões de Add Status e modal
+[x] Modularização das funções de ordenação
+[x] Actions CRUD completas para Leads
+[x] Sistema de revalidação de tags implementado
 
 
 # Sprint Backlog
 
 Conseguir criar colunas estilo kanban/trello, de forma dinamica e responsiva
 
-[ ] Botão de Add Lead e modal
+[x] Botão de Add Lead e modal
 
 
 botão add novo lead:

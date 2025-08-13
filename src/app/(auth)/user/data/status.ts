@@ -11,6 +11,7 @@ import {
   DEFAULT_ORDER_START,
   DEFAULT_ORDER_INCREMENT
 } from '../helpers/useOrder'
+import { revalidateTag } from 'next/cache'
 
 export interface Status {
   id: string
@@ -25,6 +26,10 @@ export interface CreateStatusData {
   title: string
   color: string
 }
+
+// Tags de revalidação
+const STATUS_TAG = 'status'
+const KANBAN_TAG = 'kanban'
 
 // Helper para gerar ordem eficiente
 async function getNextOrder(userId: string): Promise<number> {
@@ -97,6 +102,10 @@ export async function createStatus(data: CreateStatusData): Promise<{ success: b
       id: normalizedId,
       ...statusData
     }
+
+    // Revalidar tags
+    revalidateTag(STATUS_TAG)
+    revalidateTag(KANBAN_TAG)
     
     return { success: true, status: newStatus }
   } catch (error) {
@@ -182,6 +191,10 @@ export async function updateStatus(id: string, data: Partial<CreateStatusData>):
     }
 
     await statusRef.update(updateData)
+
+    // Revalidar tags
+    revalidateTag(STATUS_TAG)
+    revalidateTag(KANBAN_TAG)
     
     return { success: true }
   } catch (error) {
@@ -213,6 +226,10 @@ export async function deleteStatus(id: string): Promise<{ success: boolean; erro
     }
 
     await statusRef.delete()
+
+    // Revalidar tags
+    revalidateTag(STATUS_TAG)
+    revalidateTag(KANBAN_TAG)
     
     return { success: true }
   } catch (error) {
@@ -292,6 +309,10 @@ export async function reorderStatus(id: string, newPosition: number): Promise<{ 
       order: newOrder,
       updatedAt: new Date()
     })
+
+    // Revalidar tags
+    revalidateTag(STATUS_TAG)
+    revalidateTag(KANBAN_TAG)
     
     return { success: true }
   } catch (error) {
@@ -344,6 +365,10 @@ async function rebalanceOrders(userId: string, targetId: string, newPosition: nu
     })
 
     await batch.commit()
+
+    // Revalidar tags
+    revalidateTag(STATUS_TAG)
+    revalidateTag(KANBAN_TAG)
     
     return { success: true }
   } catch (error) {
