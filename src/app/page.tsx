@@ -13,7 +13,7 @@ export default function Home() {
   const { user } = useAuthStore()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/30">
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted/30 overflow-x-hidden">
       <div className="container mx-auto px-4 py-8 space-y-12">
         {/* Hero Section */}
         <div className="text-center space-y-6">
@@ -24,7 +24,7 @@ export default function Home() {
             <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
               Lasy CRM
             </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto break-words">
               Mini CRM completo e responsivo desenvolvido com Next.js, TypeScript e Firebase. 
               Foco em usabilidade e design moderno.
             </p>
@@ -68,7 +68,7 @@ export default function Home() {
         </Card>
 
         {/* Links Section */}
-        <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-4 md:gap-6 max-w-4xl mx-auto">
           <Card className="hover:shadow-md transition-shadow flex flex-col">
             <CardHeader className="flex-1">
               <CardTitle className="text-lg flex items-center gap-2">
@@ -132,7 +132,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 gap-4 md:gap-6">
             {/* Core Features */}
             <Card>
               <CardHeader>
@@ -268,7 +268,7 @@ export default function Home() {
             <CardDescription>Principais tecnologias utilizadas no desenvolvimento</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
               <div className="flex flex-col items-center space-y-3 p-4 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
                 <div className="flex items-center gap-2">
                   <Flame className="h-5 w-5 text-orange-500" />
@@ -340,12 +340,12 @@ export default function Home() {
           <p className="text-sm text-muted-foreground">
             Com auxílio de IA, usando GitHub Copilot com Claude Sonnet 4
           </p>
-          <div className="flex items-center justify-center gap-6 pt-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 pt-4">
             <a 
               href="https://github.com/MrIago" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
             >
               <Github className="h-4 w-4" />
               GitHub Pessoal
@@ -354,7 +354,7 @@ export default function Home() {
               href="https://github.com/MrIagoUFV" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
             >
               <Github className="h-4 w-4" />
               GitHub Faculdade
@@ -363,7 +363,7 @@ export default function Home() {
               href="https://www.instagram.com/mriago/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
             >
               <ExternalLink className="h-4 w-4" />
               Instagram
@@ -372,7 +372,7 @@ export default function Home() {
               href="https://wa.me/5522999675358" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
             >
               <MessageCircle className="h-4 w-4" />
               WhatsApp
