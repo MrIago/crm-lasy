@@ -257,7 +257,7 @@ export default function QuadroKanbanMobile({ onAddLead, onEditLead, onViewLead, 
                     className="w-full justify-start gap-2 h-8"
                   >
                     <Edit className="h-4 w-4" />
-                    Editar "{currentStatus.title}"
+                    Editar &quot;{currentStatus.title}&quot;
                   </Button>
                 </div>
               )}
