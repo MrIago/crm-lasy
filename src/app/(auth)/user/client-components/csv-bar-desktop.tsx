@@ -17,6 +17,7 @@ import { getAllStatus, Status } from "../data/status"
 interface CsvBarDesktopProps {
   onImportCsv?: () => void
   onExportCsv?: () => void
+  onLeadChange?: () => void // Callback para quando leads forem criados via CSV
 }
 
 interface CsvRow {
@@ -28,7 +29,7 @@ interface CsvRow {
   observacoes?: string
 }
 
-export default function CsvBarDesktop({ onImportCsv, onExportCsv }: CsvBarDesktopProps) {
+export default function CsvBarDesktop({ onImportCsv, onExportCsv, onLeadChange }: CsvBarDesktopProps) {
   const [isExporting, setIsExporting] = useState(false)
   const [isImporting, setIsImporting] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -344,6 +345,7 @@ export default function CsvBarDesktop({ onImportCsv, onExportCsv }: CsvBarDeskto
       // Mostrar resultado
       if (result.successCount > 0) {
         toast.success(`${result.successCount} leads importados com sucesso!`)
+        onLeadChange?.() // Chama o callback para recarregar o kanban
       }
       
       if (result.errorCount > 0) {

@@ -43,6 +43,11 @@ export default function UserDashboardClient() {
     setKanbanRefreshTrigger(prev => prev + 1)
   }
 
+  const handleLeadChange = () => {
+    // Incrementa o trigger para recarregar o kanban
+    setKanbanRefreshTrigger(prev => prev + 1)
+  }
+
   const handleOpenLeadSheet = () => {
     setEditingLead(null) // Limpa qualquer lead em edição
     setIsLeadSheetOpen(true)
@@ -74,7 +79,7 @@ export default function UserDashboardClient() {
       <div className="flex gap-4 mb-6">
         <AddStatusBtn onOpenModal={handleOpenStatusModal} />
         <AddLeadBtn onOpenModal={handleOpenLeadSheet} />
-        {!isMobile && <CsvBarDesktop />}
+        {!isMobile && <CsvBarDesktop onLeadChange={handleLeadChange} />}
       </div>
 
       {/* Quadro Kanban responsivo */}
@@ -109,6 +114,7 @@ export default function UserDashboardClient() {
         isOpen={isLeadSheetOpen} 
         onClose={handleCloseLeadSheet}
         editLead={editingLead}
+        onLeadChange={handleLeadChange}
       />
       <ViewLeadSheet
         isOpen={isViewLeadSheetOpen}

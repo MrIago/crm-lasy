@@ -45,9 +45,10 @@ interface AddLeadSheetProps {
   isOpen: boolean
   onClose: () => void
   editLead?: Lead | null
+  onLeadChange?: () => void // Callback para quando um lead for criado ou editado
 }
 
-export default function AddLeadSheet({ isOpen, onClose, editLead }: AddLeadSheetProps) {
+export default function AddLeadSheet({ isOpen, onClose, editLead, onLeadChange }: AddLeadSheetProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [statusList, setStatusList] = useState<Status[]>([])
   const [loadingStatus, setLoadingStatus] = useState(false)
@@ -236,6 +237,7 @@ export default function AddLeadSheet({ isOpen, onClose, editLead }: AddLeadSheet
 
         if (result.success) {
           toast.success("Lead atualizado com sucesso!")
+          onLeadChange?.() // Chama o callback para recarregar o kanban
           handleCancel()
         } else {
           toast.error(result.error || "Erro ao atualizar lead")
@@ -256,6 +258,7 @@ export default function AddLeadSheet({ isOpen, onClose, editLead }: AddLeadSheet
 
         if (result.success) {
           toast.success("Lead criado com sucesso!")
+          onLeadChange?.() // Chama o callback para recarregar o kanban
           handleCancel()
         } else {
           toast.error(result.error || "Erro ao criar lead")
